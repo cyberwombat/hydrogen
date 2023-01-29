@@ -1,26 +1,31 @@
-// @ts-expect-error @headlessui/react incompatibility with node16 resolution
-import {Disclosure} from '@headlessui/react';
-import {Link} from '@shopify/hydrogen';
+import { Disclosure } from '@headlessui/react'
+import { Link } from '@shopify/hydrogen'
+import {
+  JSXElementConstructor,
+  Key,
+  ReactElement,
+  ReactFragment,
+  ReactPortal
+} from 'react'
 
-import {Heading, IconCaret} from '~/components';
-import type {EnhancedMenu, EnhancedMenuItem} from '~/lib/utils';
+import { Heading, IconCaret } from '~/components/index.js'
+import type { EnhancedMenu, EnhancedMenuItem } from '~/lib/utils.js'
 
 /**
  * A server component that specifies the content of the footer on the website
  */
-export function FooterMenu({menu}: {menu?: EnhancedMenu}) {
+export function FooterMenu({ menu }: { menu?: EnhancedMenu }) {
   const styles = {
     section: 'grid gap-4',
-    nav: 'grid gap-2 pb-6',
-  };
+    nav: 'grid gap-2 pb-6'
+  }
 
   return (
     <>
       {(menu?.items || []).map((item: EnhancedMenuItem) => (
         <section key={item.id} className={styles.section}>
           <Disclosure>
-            {/* @ts-expect-error @headlessui/react incompatibility with node16 resolution */}
-            {({open}) => (
+            {({ open }) => (
               <>
                 <Disclosure.Button className="text-left md:cursor-default">
                   <Heading className="flex justify-between" size="lead" as="h3">
@@ -40,15 +45,33 @@ export function FooterMenu({menu}: {menu?: EnhancedMenu}) {
                   >
                     <Disclosure.Panel static>
                       <nav className={styles.nav}>
-                        {item.items.map((subItem) => (
-                          <Link
-                            key={subItem.id}
-                            to={subItem.to}
-                            target={subItem.target}
-                          >
-                            {subItem.title}
-                          </Link>
-                        ))}
+                        {item.items.map(
+                          (subItem: {
+                            id: Key | null | undefined
+                            to: string
+                            target: string | (string & {}) | undefined
+                            title:
+                              | string
+                              | number
+                              | boolean
+                              | ReactElement<
+                                  any,
+                                  string | JSXElementConstructor<any>
+                                >
+                              | ReactFragment
+                              | ReactPortal
+                              | null
+                              | undefined
+                          }) => (
+                            <Link
+                              key={subItem.id}
+                              to={subItem.to}
+                              target={subItem.target}
+                            >
+                              {subItem.title}
+                            </Link>
+                          )
+                        )}
                       </nav>
                     </Disclosure.Panel>
                   </div>
@@ -59,5 +82,5 @@ export function FooterMenu({menu}: {menu?: EnhancedMenu}) {
         </section>
       ))}{' '}
     </>
-  );
+  )
 }

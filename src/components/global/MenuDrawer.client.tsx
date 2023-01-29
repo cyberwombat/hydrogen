@@ -1,17 +1,17 @@
-import {EnhancedMenu} from '~/lib/utils';
-import {Text} from '~/components';
-import {Drawer} from './Drawer.client';
-import {Link} from '@shopify/hydrogen';
-import {startTransition} from 'react';
+import { Link } from '@shopify/hydrogen'
+import { startTransition } from 'react'
+import { Text } from '~/components/index.js'
+import { EnhancedMenu } from '~/lib/utils.js'
+import { Drawer } from './Drawer.client.js'
 
 export function MenuDrawer({
   isOpen,
   onClose,
-  menu,
+  menu
 }: {
-  isOpen: boolean;
-  onClose: () => void;
-  menu: EnhancedMenu;
+  isOpen: boolean
+  onClose: () => void
+  menu: EnhancedMenu
 }) {
   return (
     <Drawer open={isOpen} onClose={onClose} openFrom="left" heading="Menu">
@@ -19,15 +19,15 @@ export function MenuDrawer({
         <MenuMobileNav menu={menu} onClose={onClose} />
       </div>
     </Drawer>
-  );
+  )
 }
 
 function MenuMobileNav({
   menu,
-  onClose,
+  onClose
 }: {
-  menu: EnhancedMenu;
-  onClose: () => void;
+  menu: EnhancedMenu
+  onClose: () => void
 }) {
   return (
     <nav className="grid gap-4 p-6 sm:gap-6 sm:px-12 sm:py-8">
@@ -45,5 +45,5 @@ function MenuMobileNav({
         </Link>
       ))}
     </nav>
-  );
+  )
 }

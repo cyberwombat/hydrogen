@@ -1,56 +1,56 @@
-import clsx from 'clsx';
 import {
   flattenConnection,
   Image,
   Link,
   Money,
-  useMoney,
-} from '@shopify/hydrogen';
+  useMoney
+} from '@shopify/hydrogen'
+import clsx from 'clsx'
 
-import {Text} from '~/components';
-import {isDiscounted, isNewArrival} from '~/lib/utils';
-import {getProductPlaceholder} from '~/lib/placeholders';
 import type {
   MoneyV2,
   Product,
   ProductVariant,
-  ProductVariantConnection,
-} from '@shopify/hydrogen/storefront-api-types';
+  ProductVariantConnection
+} from '@shopify/hydrogen/storefront-api-types'
+import { Text } from '~/components/index.js'
+import { getProductPlaceholder } from '~/lib/placeholders.js'
+import { isDiscounted, isNewArrival } from '~/lib/utils.js'
 
 export function ProductCard({
   product,
   label,
   className,
   loading,
-  onClick,
+  onClick
 }: {
-  product: Product;
-  label?: string;
-  className?: string;
-  loading?: HTMLImageElement['loading'];
-  onClick?: () => void;
+  product: Product
+  label?: string
+  className?: string
+  loading?: HTMLImageElement['loading']
+  onClick?: () => void
 }) {
-  let cardLabel;
+  let cardLabel
 
-  const cardData = product?.variants ? product : getProductPlaceholder();
+  const cardData = product?.variants ? product : getProductPlaceholder()
 
   const {
     image,
     priceV2: price,
-    compareAtPriceV2: compareAtPrice,
+    compareAtPriceV2: compareAtPrice
   } = flattenConnection<ProductVariant>(
-    cardData?.variants as ProductVariantConnection,
-  )[0] || {};
+    cardData?.variants as ProductVariantConnection
+  )[0] || {}
 
   if (label) {
-    cardLabel = label;
+    cardLabel = label
   } else if (isDiscounted(price as MoneyV2, compareAtPrice as MoneyV2)) {
-    cardLabel = 'Sale';
+    cardLabel = 'Sale'
   } else if (isNewArrival(product.publishedAt)) {
-    cardLabel = 'New';
+    cardLabel = 'New'
   }
 
-  const styles = clsx('grid gap-6', className);
+  const styles = clsx.default('grid gap-6', className)
 
   return (
     <Link onClick={onClick} to={`/products/${product.handle}`}>
@@ -72,7 +72,7 @@ export function ProductCard({
                 crop: 'center',
                 scale: 2,
                 width: 320,
-                height: 400,
+                height: 400
               }}
               // @ts-ignore Stock type has `src` as optional
               data={image}
@@ -102,25 +102,25 @@ export function ProductCard({
         </div>
       </div>
     </Link>
-  );
+  )
 }
 
 function CompareAtPrice({
   data,
-  className,
+  className
 }: {
-  data: MoneyV2;
-  className?: string;
+  data: MoneyV2
+  className?: string
 }) {
-  const {currencyNarrowSymbol, withoutTrailingZerosAndCurrency} =
-    useMoney(data);
+  const { currencyNarrowSymbol, withoutTrailingZerosAndCurrency } =
+    useMoney(data)
 
-  const styles = clsx('strike', className);
+  const styles = clsx.default('strike', className)
 
   return (
     <span className={styles}>
       {currencyNarrowSymbol}
       {withoutTrailingZerosAndCurrency}
     </span>
-  );
+  )
 }

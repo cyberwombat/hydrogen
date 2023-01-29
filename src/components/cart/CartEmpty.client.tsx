@@ -1,31 +1,36 @@
-import {useRef} from 'react';
-import {useScroll} from 'react-use';
-import {fetchSync} from '@shopify/hydrogen';
-import {Button, Text, ProductCard, Heading, Skeleton} from '~/components';
-import type {Product} from '@shopify/hydrogen/storefront-api-types';
-import {Suspense} from 'react';
+import { fetchSync } from '@shopify/hydrogen'
+import type { Product } from '@shopify/hydrogen/storefront-api-types'
+import { Suspense, useRef } from 'react'
+import { useScroll } from 'react-use'
+import {
+  Button,
+  Heading,
+  ProductCard,
+  Skeleton,
+  Text
+} from '~/components/index.js'
 
 export function CartEmpty({
   onClose,
-  layout = 'drawer',
+  layout = 'drawer'
 }: {
-  onClose?: () => void;
-  layout?: 'page' | 'drawer';
+  onClose?: () => void
+  layout?: 'page' | 'drawer'
 }) {
-  const scrollRef = useRef(null);
-  const {y} = useScroll(scrollRef);
+  const scrollRef = useRef(null)
+  const { y } = useScroll(scrollRef)
 
   const container = {
     drawer: `grid content-start gap-4 px-6 pb-8 transition overflow-y-scroll md:gap-12 md:px-12 h-screen-no-nav md:pb-12 ${
       y > 0 ? 'border-t' : ''
     }`,
-    page: `grid pb-12 w-full md:items-start gap-4 md:gap-8 lg:gap-12`,
-  };
+    page: `grid pb-12 w-full md:items-start gap-4 md:gap-8 lg:gap-12`
+  }
 
   const topProductsContainer = {
     drawer: '',
-    page: 'md:grid-cols-4 sm:grid-col-4',
-  };
+    page: 'md:grid-cols-4 sm:grid-col-4'
+  }
 
   return (
     <div ref={scrollRef} className={container[layout]}>
@@ -51,23 +56,23 @@ export function CartEmpty({
         </div>
       </section>
     </div>
-  );
+  )
 }
 
-function TopProducts({onClose}: {onClose?: () => void}) {
-  const response = fetchSync('/api/bestSellers');
+function TopProducts({ onClose }: { onClose?: () => void }) {
+  const response = fetchSync('/api/bestSellers')
 
   if (!response.ok) {
     console.error(
-      `Unable to load top products ${response.url} returned a ${response.status}`,
-    );
-    return null;
+      `Unable to load top products ${response.url} returned a ${response.status}`
+    )
+    return null
   }
 
-  const products: Product[] = response.json();
+  const products: Product[] = response.json()
 
   if (products.length === 0) {
-    return <Text format>No products found.</Text>;
+    return <Text format>No products found.</Text>
   }
 
   return (
@@ -76,7 +81,7 @@ function TopProducts({onClose}: {onClose?: () => void}) {
         <ProductCard product={product} key={product.id} onClick={onClose} />
       ))}
     </>
-  );
+  )
 }
 
 function Loading() {
@@ -90,5 +95,5 @@ function Loading() {
         </div>
       ))}
     </>
-  );
+  )
 }

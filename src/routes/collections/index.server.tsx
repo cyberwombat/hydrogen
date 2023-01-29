@@ -1,22 +1,22 @@
-import {Suspense} from 'react';
 import {
-  useShopQuery,
-  useLocalization,
   gql,
   Seo,
-  useServerAnalytics,
   ShopifyAnalyticsConstants,
-} from '@shopify/hydrogen';
-import type {Collection} from '@shopify/hydrogen/storefront-api-types';
+  useLocalization,
+  useServerAnalytics,
+  useShopQuery
+} from '@shopify/hydrogen'
+import type { Collection } from '@shopify/hydrogen/storefront-api-types'
+import { Suspense } from 'react'
 
-import {PageHeader, Section, Grid} from '~/components';
-import {Layout, CollectionCard} from '~/components/index.server';
-import {getImageLoadingPriority, PAGINATION_SIZE} from '~/lib/const';
+import { Grid, PageHeader, Section } from '~/components/index.js'
+import { CollectionCard, Layout } from '~/components/index.server.js'
+import { getImageLoadingPriority, PAGINATION_SIZE } from '~/lib/const.js'
 
 export default function Collections() {
   return (
     <Layout>
-      <Seo type="page" data={{title: 'All Collections'}} />
+      <Seo type="page" data={{ title: 'All Collections' }} />
       <PageHeader heading="Collections" />
       <Section>
         <Suspense>
@@ -24,33 +24,33 @@ export default function Collections() {
         </Suspense>
       </Section>
     </Layout>
-  );
+  )
 }
 
 function CollectionGrid() {
   const {
-    language: {isoCode: languageCode},
-    country: {isoCode: countryCode},
-  } = useLocalization();
+    language: { isoCode: languageCode },
+    country: { isoCode: countryCode }
+  } = useLocalization()
 
-  const {data} = useShopQuery<any>({
+  const { data } = useShopQuery<any>({
     query: COLLECTIONS_QUERY,
     variables: {
       pageBy: PAGINATION_SIZE,
       country: countryCode,
-      language: languageCode,
+      language: languageCode
     },
-    preload: true,
-  });
+    preload: true
+  })
 
   useServerAnalytics({
     shopify: {
       canonicalPath: '/collections',
-      pageType: ShopifyAnalyticsConstants.pageType.listCollections,
-    },
-  });
+      pageType: ShopifyAnalyticsConstants.pageType.listCollections
+    }
+  })
 
-  const collections: Collection[] = data.collections.nodes;
+  const collections: Collection[] = data.collections.nodes
 
   return (
     <Grid items={collections.length === 3 ? 3 : 2}>
@@ -62,7 +62,7 @@ function CollectionGrid() {
         />
       ))}
     </Grid>
-  );
+  )
 }
 
 const COLLECTIONS_QUERY = gql`
@@ -91,4 +91,4 @@ const COLLECTIONS_QUERY = gql`
       }
     }
   }
-`;
+`

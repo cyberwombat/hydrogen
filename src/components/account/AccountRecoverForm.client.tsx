@@ -1,39 +1,39 @@
-import {useState} from 'react';
+import { useState } from 'react'
 
-import {emailValidation} from '~/lib/utils';
-import {getInputStyleClasses} from '../../lib/styleUtils';
+import { emailValidation } from '~/lib/utils.js'
+import { getInputStyleClasses } from '../../lib/styleUtils.js'
 
 interface FormElements {
-  email: HTMLInputElement;
+  email: HTMLInputElement
 }
 
 export function AccountRecoverForm() {
-  const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const [email, setEmail] = useState('');
-  const [emailError, setEmailError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [email, setEmail] = useState('')
+  const [emailError, setEmailError] = useState<string | null>(null)
 
   async function onSubmit(
-    event: React.FormEvent<HTMLFormElement & FormElements>,
+    event: React.FormEvent<HTMLFormElement & FormElements>
   ) {
-    event.preventDefault();
+    event.preventDefault()
 
-    setEmailError(null);
-    setSubmitError(null);
+    setEmailError(null)
+    setSubmitError(null)
 
-    const newEmailError = emailValidation(event.currentTarget.email);
+    const newEmailError = emailValidation(event.currentTarget.email)
 
     if (newEmailError) {
-      setEmailError(newEmailError);
-      return;
+      setEmailError(newEmailError)
+      return
     }
 
     await callAccountRecoverApi({
-      email,
-    });
+      email
+    })
 
-    setEmail('');
-    setSubmitSuccess(true);
+    setEmail('')
+    setSubmitSuccess(true)
   }
 
   return (
@@ -77,7 +77,7 @@ export function AccountRecoverForm() {
               autoFocus
               value={email}
               onChange={(event) => {
-                setEmail(event.target.value);
+                setEmail(event.target.value)
               }}
             />
             {!emailError ? (
@@ -97,37 +97,37 @@ export function AccountRecoverForm() {
         </form>
       </div>
     </div>
-  );
+  )
 }
 
 export async function callAccountRecoverApi({
   email,
   password,
   firstName,
-  lastName,
+  lastName
 }: {
-  email: string;
-  password?: string;
-  firstName?: string;
-  lastName?: string;
+  email: string
+  password?: string
+  firstName?: string
+  lastName?: string
 }) {
   try {
     const res = await fetch(`/account/recover`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({email, password, firstName, lastName}),
-    });
+      body: JSON.stringify({ email, password, firstName, lastName })
+    })
     if (res.status === 200) {
-      return {};
+      return {}
     } else {
-      return res.json();
+      return res.json()
     }
   } catch (error: any) {
     return {
-      error: error.toString(),
-    };
+      error: error.toString()
+    }
   }
 }

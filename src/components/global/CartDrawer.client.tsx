@@ -1,12 +1,12 @@
-import {CartDetails} from '~/components/cart';
-import {Drawer} from './Drawer.client';
+import { CartDetails } from '~/components/cart/index.js'
+import { Drawer } from './Drawer.client.js'
 
 export function CartDrawer({
   isOpen,
-  onClose,
+  onClose
 }: {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen: boolean
+  onClose: () => void
 }) {
   return (
     <Drawer open={isOpen} onClose={onClose} heading="Cart" openFrom="right">
@@ -14,5 +14,5 @@ export function CartDrawer({
         <CartDetails layout="drawer" onClose={onClose} />
       </div>
     </Drawer>
-  );
+  )
 }

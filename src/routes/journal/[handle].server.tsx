@@ -1,62 +1,62 @@
 import {
-  useLocalization,
-  useShopQuery,
-  Seo,
+  CacheLong,
   gql,
   Image,
-  CacheLong,
-  type HydrogenRouteProps,
-  useServerAnalytics,
+  Seo,
   ShopifyAnalyticsConstants,
-} from '@shopify/hydrogen';
-import type {Blog} from '@shopify/hydrogen/storefront-api-types';
-import {Suspense} from 'react';
+  useLocalization,
+  useServerAnalytics,
+  useShopQuery,
+  type HydrogenRouteProps
+} from '@shopify/hydrogen'
+import type { Blog } from '@shopify/hydrogen/storefront-api-types'
+import { Suspense } from 'react'
 
-import {CustomFont, PageHeader, Section} from '~/components';
-import {Layout, NotFound} from '~/components/index.server';
-import {ATTR_LOADING_EAGER} from '~/lib/const';
+import { CustomFont, PageHeader, Section } from '~/components/index.js'
+import { Layout, NotFound } from '~/components/index.server.js'
+import { ATTR_LOADING_EAGER } from '~/lib/const.js'
 
-const BLOG_HANDLE = 'journal';
+const BLOG_HANDLE = 'journal'
 
-export default function Post({params, response}: HydrogenRouteProps) {
-  response.cache(CacheLong());
+export default function Post({ params, response }: HydrogenRouteProps) {
+  response.cache(CacheLong())
   const {
-    language: {isoCode: languageCode},
-    country: {isoCode: countryCode},
-  } = useLocalization();
+    language: { isoCode: languageCode },
+    country: { isoCode: countryCode }
+  } = useLocalization()
 
-  const {handle} = params;
-  const {data} = useShopQuery<{
-    blog: Blog;
+  const { handle } = params
+  const { data } = useShopQuery<{
+    blog: Blog
   }>({
     query: ARTICLE_QUERY,
     variables: {
       language: languageCode,
       blogHandle: BLOG_HANDLE,
-      articleHandle: handle,
-    },
-  });
+      articleHandle: handle
+    }
+  })
 
   useServerAnalytics({
     shopify: {
       canonicalPath: `/${BLOG_HANDLE}/${handle}`,
-      pageType: ShopifyAnalyticsConstants.pageType.article,
-    },
-  });
+      pageType: ShopifyAnalyticsConstants.pageType.article
+    }
+  })
 
   if (!data?.blog?.articleByHandle) {
-    return <NotFound />;
+    return <NotFound />
   }
 
-  const {title, publishedAt, contentHtml, author} = data.blog.articleByHandle;
+  const { title, publishedAt, contentHtml, author } = data.blog.articleByHandle
   const formattedDate = new Intl.DateTimeFormat(
     `${languageCode}-${countryCode}`,
     {
       year: 'numeric',
       month: 'long',
-      day: 'numeric',
-    },
-  ).format(new Date(publishedAt));
+      day: 'numeric'
+    }
+  ).format(new Date(publishedAt))
 
   return (
     <Layout>
@@ -82,17 +82,17 @@ export default function Post({params, response}: HydrogenRouteProps) {
             loading={ATTR_LOADING_EAGER}
             loaderOptions={{
               scale: 2,
-              crop: 'center',
+              crop: 'center'
             }}
           />
         )}
         <div
-          dangerouslySetInnerHTML={{__html: contentHtml}}
+          dangerouslySetInnerHTML={{ __html: contentHtml }}
           className="article"
         />
       </Section>
     </Layout>
-  );
+  )
 }
 
 const ARTICLE_QUERY = gql`
@@ -119,4 +119,4 @@ const ARTICLE_QUERY = gql`
       }
     }
   }
-`;
+`

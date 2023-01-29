@@ -1,11 +1,11 @@
-import {IconClose} from '~/components';
+import { IconClose } from '~/components/index.js'
 
 export function Modal({
   children,
-  close,
+  close
 }: {
-  children: React.ReactNode;
-  close: () => void;
+  children: React.ReactNode
+  close: () => void
 }) {
   return (
     <div
@@ -39,5 +39,5 @@ export function Modal({
         </div>
       </div>
     </div>
-  );
+  )
 }

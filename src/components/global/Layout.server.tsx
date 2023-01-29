@@ -1,20 +1,25 @@
-import {Suspense} from 'react';
-import {useLocalization, useShopQuery, CacheLong, gql} from '@shopify/hydrogen';
-import type {Menu, Shop} from '@shopify/hydrogen/storefront-api-types';
+import {
+  CacheLong,
+  gql,
+  useLocalization,
+  useShopQuery
+} from '@shopify/hydrogen'
+import type { Menu, Shop } from '@shopify/hydrogen/storefront-api-types'
+import { Suspense } from 'react'
 
-import {Header} from '~/components';
-import {Footer} from '~/components/index.server';
-import {parseMenu} from '~/lib/utils';
+import { Header } from '~/components/index.js'
+import { Footer } from '~/components/index.server.js'
+import { parseMenu } from '~/lib/utils.js'
 
-const HEADER_MENU_HANDLE = 'main-menu';
-const FOOTER_MENU_HANDLE = 'footer';
+const HEADER_MENU_HANDLE = 'main-menu'
+const FOOTER_MENU_HANDLE = 'footer'
 
-const SHOP_NAME_FALLBACK = 'Hydrogen';
+const SHOP_NAME_FALLBACK = 'Hydrogen'
 
 /**
  * A server component that defines a structure and organization of a page that can be used in different parts of the Hydrogen app
  */
-export function Layout({children}: {children: React.ReactNode}) {
+export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <div className="flex flex-col min-h-screen">
@@ -34,40 +39,40 @@ export function Layout({children}: {children: React.ReactNode}) {
         <FooterWithMenu />
       </Suspense>
     </>
-  );
+  )
 }
 
 function HeaderWithMenu() {
-  const {shopName, headerMenu} = useLayoutQuery();
-  return <Header title={shopName} menu={headerMenu} />;
+  const { shopName, headerMenu } = useLayoutQuery()
+  return <Header title={shopName} menu={headerMenu} />
 }
 
 function FooterWithMenu() {
-  const {footerMenu} = useLayoutQuery();
-  return <Footer menu={footerMenu} />;
+  const { footerMenu } = useLayoutQuery()
+  return <Footer menu={footerMenu} />
 }
 
 function useLayoutQuery() {
   const {
-    language: {isoCode: languageCode},
-  } = useLocalization();
+    language: { isoCode: languageCode }
+  } = useLocalization()
 
-  const {data} = useShopQuery<{
-    shop: Shop;
-    headerMenu: Menu;
-    footerMenu: Menu;
+  const { data } = useShopQuery<{
+    shop: Shop
+    headerMenu: Menu
+    footerMenu: Menu
   }>({
     query: SHOP_QUERY,
     variables: {
       language: languageCode,
       headerMenuHandle: HEADER_MENU_HANDLE,
-      footerMenuHandle: FOOTER_MENU_HANDLE,
+      footerMenuHandle: FOOTER_MENU_HANDLE
     },
     cache: CacheLong(),
-    preload: '*',
-  });
+    preload: '*'
+  })
 
-  const shopName = data ? data.shop.name : SHOP_NAME_FALLBACK;
+  const shopName = data ? data.shop.name : SHOP_NAME_FALLBACK
 
   /*
     Modify specific links/routes (optional)
@@ -77,17 +82,17 @@ function useLayoutQuery() {
       - /blog/news/blog-post -> /news/blog-post
       - /collections/all -> /products
   */
-  const customPrefixes = {BLOG: '', CATALOG: 'products'};
+  const customPrefixes = { BLOG: '', CATALOG: 'products' }
 
   const headerMenu = data?.headerMenu
     ? parseMenu(data.headerMenu, customPrefixes)
-    : undefined;
+    : undefined
 
   const footerMenu = data?.footerMenu
     ? parseMenu(data.footerMenu, customPrefixes)
-    : undefined;
+    : undefined
 
-  return {footerMenu, headerMenu, shopName};
+  return { footerMenu, headerMenu, shopName }
 }
 
 const SHOP_QUERY = gql`
@@ -126,4 +131,4 @@ const SHOP_QUERY = gql`
       }
     }
   }
-`;
+`

@@ -1,75 +1,75 @@
-import {useState} from 'react';
-import {useNavigate, Link} from '@shopify/hydrogen/client';
-import {getInputStyleClasses} from '../../lib/styleUtils';
+import { Link, useNavigate } from '@shopify/hydrogen/client'
+import { useState } from 'react'
+import { getInputStyleClasses } from '../../lib/styleUtils.js'
 
 interface FormElements {
-  email: HTMLInputElement;
-  password: HTMLInputElement;
+  email: HTMLInputElement
+  password: HTMLInputElement
 }
 
-export function AccountLoginForm({shopName}: {shopName: string}) {
-  const navigate = useNavigate();
+export function AccountLoginForm({ shopName }: { shopName: string }) {
+  const navigate = useNavigate()
 
-  const [hasSubmitError, setHasSubmitError] = useState(false);
-  const [showEmailField, setShowEmailField] = useState(true);
-  const [email, setEmail] = useState('');
-  const [emailError, setEmailError] = useState<null | string>(null);
-  const [password, setPassword] = useState('');
-  const [passwordError, setPasswordError] = useState<null | string>(null);
+  const [hasSubmitError, setHasSubmitError] = useState(false)
+  const [showEmailField, setShowEmailField] = useState(true)
+  const [email, setEmail] = useState('')
+  const [emailError, setEmailError] = useState<null | string>(null)
+  const [password, setPassword] = useState('')
+  const [passwordError, setPasswordError] = useState<null | string>(null)
 
   function onSubmit(event: React.FormEvent<HTMLFormElement & FormElements>) {
-    event.preventDefault();
+    event.preventDefault()
 
-    setEmailError(null);
-    setHasSubmitError(false);
-    setPasswordError(null);
+    setEmailError(null)
+    setHasSubmitError(false)
+    setPasswordError(null)
 
     if (showEmailField) {
-      checkEmail(event);
+      checkEmail(event)
     } else {
-      checkPassword(event);
+      checkPassword(event)
     }
   }
 
   function checkEmail(event: React.FormEvent<HTMLFormElement & FormElements>) {
     if (event.currentTarget.email.validity.valid) {
-      setShowEmailField(false);
+      setShowEmailField(false)
     } else {
-      setEmailError('Please enter a valid email');
+      setEmailError('Please enter a valid email')
     }
   }
 
   async function checkPassword(
-    event: React.FormEvent<HTMLFormElement & FormElements>,
+    event: React.FormEvent<HTMLFormElement & FormElements>
   ) {
-    const validity = event.currentTarget.password.validity;
+    const validity = event.currentTarget.password.validity
     if (validity.valid) {
       const response = await callLoginApi({
         email,
-        password,
-      });
+        password
+      })
 
       if (response.error) {
-        setHasSubmitError(true);
-        resetForm();
+        setHasSubmitError(true)
+        resetForm()
       } else {
-        navigate('/account');
+        navigate('/account')
       }
     } else {
       setPasswordError(
         validity.valueMissing
           ? 'Please enter a password'
-          : 'Passwords must be at least 6 characters',
-      );
+          : 'Passwords must be at least 6 characters'
+      )
     }
   }
 
   function resetForm() {
-    setShowEmailField(true);
-    setEmail('');
-    setEmailError(null);
-    setPassword('');
-    setPasswordError(null);
+    setShowEmailField(true)
+    setEmail('')
+    setEmailError(null)
+    setPassword('')
+    setPasswordError(null)
   }
 
   return (
@@ -106,34 +106,34 @@ export function AccountLoginForm({shopName}: {shopName: string}) {
         </form>
       </div>
     </div>
-  );
+  )
 }
 
 export async function callLoginApi({
   email,
-  password,
+  password
 }: {
-  email: string;
-  password: string;
+  email: string
+  password: string
 }) {
   try {
     const res = await fetch(`/account/login`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({email, password}),
-    });
+      body: JSON.stringify({ email, password })
+    })
     if (res.ok) {
-      return {};
+      return {}
     } else {
-      return res.json();
+      return res.json()
     }
   } catch (error: any) {
     return {
-      error: error.toString(),
-    };
+      error: error.toString()
+    }
   }
 }
 
@@ -141,12 +141,12 @@ function EmailField({
   email,
   setEmail,
   emailError,
-  shopName,
+  shopName
 }: {
-  email: string;
-  setEmail: (email: string) => void;
-  emailError: null | string;
-  shopName: string;
+  email: string
+  setEmail: (email: string) => void
+  emailError: null | string
+  shopName: string
 }) {
   return (
     <>
@@ -164,7 +164,7 @@ function EmailField({
           autoFocus
           value={email}
           onChange={(event) => {
-            setEmail(event.target.value);
+            setEmail(event.target.value)
           }}
         />
         {!emailError ? (
@@ -190,15 +190,15 @@ function EmailField({
         </p>
       </div>
     </>
-  );
+  )
 }
 
 function ValidEmail({
   email,
-  resetForm,
+  resetForm
 }: {
-  email: string;
-  resetForm: () => void;
+  email: string
+  resetForm: () => void
 }) {
   return (
     <div className="mb-3 flex items-center justify-between">
@@ -222,17 +222,17 @@ function ValidEmail({
         </button>
       </div>
     </div>
-  );
+  )
 }
 
 function PasswordField({
   password,
   setPassword,
-  passwordError,
+  passwordError
 }: {
-  password: string;
-  setPassword: (password: string) => void;
-  passwordError: null | string;
+  password: string
+  setPassword: (password: string) => void
+  passwordError: null | string
 }) {
   return (
     <>
@@ -251,7 +251,7 @@ function PasswordField({
           // eslint-disable-next-line jsx-a11y/no-autofocus
           autoFocus
           onChange={(event) => {
-            setPassword(event.target.value);
+            setPassword(event.target.value)
           }}
         />
         {!passwordError ? (
@@ -278,5 +278,5 @@ function PasswordField({
         </Link>
       </div>
     </>
-  );
+  )
 }

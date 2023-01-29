@@ -1,30 +1,31 @@
-import {Suspense} from 'react';
 import {
   CacheLong,
   gql,
   Seo,
   ShopifyAnalyticsConstants,
-  useServerAnalytics,
   useLocalization,
-  useShopQuery,
-} from '@shopify/hydrogen';
+  useServerAnalytics,
+  useShopQuery
+} from '@shopify/hydrogen'
+import { Suspense } from 'react'
 
-import {MEDIA_FRAGMENT, PRODUCT_CARD_FRAGMENT} from '~/lib/fragments';
-import {getHeroPlaceholder} from '~/lib/placeholders';
-import {FeaturedCollections, Hero} from '~/components';
-import {Layout, ProductSwimlane} from '~/components/index.server';
 import {
   CollectionConnection,
   ProductConnection,
-} from '@shopify/hydrogen/storefront-api-types';
+  Shop
+} from '@shopify/hydrogen/storefront-api-types'
+import { FeaturedCollections, Hero } from '~/components/index.js'
+import { Layout, ProductSwimlane } from '~/components/index.server.js'
+import { MEDIA_FRAGMENT, PRODUCT_CARD_FRAGMENT } from '~/lib/fragments.js'
+import { getHeroPlaceholder } from '~/lib/placeholders.js'
 
 export default function Homepage() {
   useServerAnalytics({
     shopify: {
       canonicalPath: '/',
-      pageType: ShopifyAnalyticsConstants.pageType.home,
-    },
-  });
+      pageType: ShopifyAnalyticsConstants.pageType.home
+    }
+  })
 
   return (
     <Layout>
@@ -35,34 +36,34 @@ export default function Homepage() {
         <HomepageContent />
       </Suspense>
     </Layout>
-  );
+  )
 }
 
 function HomepageContent() {
   const {
-    language: {isoCode: languageCode},
-    country: {isoCode: countryCode},
-  } = useLocalization();
+    language: { isoCode: languageCode },
+    country: { isoCode: countryCode }
+  } = useLocalization()
 
-  const {data} = useShopQuery<{
-    heroBanners: CollectionConnection;
-    featuredCollections: CollectionConnection;
-    featuredProducts: ProductConnection;
+  const { data } = useShopQuery<{
+    heroBanners: CollectionConnection
+    featuredCollections: CollectionConnection
+    featuredProducts: ProductConnection
   }>({
     query: HOMEPAGE_CONTENT_QUERY,
     variables: {
       language: languageCode,
-      country: countryCode,
+      country: countryCode
     },
-    preload: true,
-  });
+    preload: true
+  })
 
-  const {heroBanners, featuredCollections, featuredProducts} = data;
+  const { heroBanners, featuredCollections, featuredProducts } = data
 
   // fill in the hero banners with placeholders if they're missing
   const [primaryHero, secondaryHero, tertiaryHero] = getHeroPlaceholder(
-    heroBanners.nodes,
-  );
+    heroBanners.nodes
+  )
 
   return (
     <>
@@ -81,19 +82,19 @@ function HomepageContent() {
       />
       {tertiaryHero && <Hero {...tertiaryHero} />}
     </>
-  );
+  )
 }
 
 function SeoForHomepage() {
   const {
     data: {
-      shop: {name, description},
-    },
-  } = useShopQuery({
+      shop: { name, description }
+    }
+  } = useShopQuery<{ shop: Shop }>({
     query: HOMEPAGE_SEO_QUERY,
     cache: CacheLong(),
-    preload: true,
-  });
+    preload: true
+  })
 
   return (
     <Seo
@@ -101,10 +102,10 @@ function SeoForHomepage() {
       data={{
         title: name,
         description,
-        titleTemplate: '%s · Powered by Hydrogen',
+        titleTemplate: '%s · Powered by Hydrogen'
       }}
     />
-  );
+  )
 }
 
 /**
@@ -180,7 +181,7 @@ const HOMEPAGE_CONTENT_QUERY = gql`
       }
     }
   }
-`;
+`
 
 const HOMEPAGE_SEO_QUERY = gql`
   query shopInfo {
@@ -189,4 +190,4 @@ const HOMEPAGE_SEO_QUERY = gql`
       description
     }
   }
-`;
+`

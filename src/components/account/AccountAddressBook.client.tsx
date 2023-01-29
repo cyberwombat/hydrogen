@@ -1,39 +1,38 @@
-import {useState, useMemo, MouseEventHandler} from 'react';
+import { MouseEventHandler, useMemo, useState } from 'react'
 
-import {Text, Button} from '~/components/elements';
-import {Modal} from '../index';
-import {AccountAddressEdit, AccountDeleteAddress} from '../index';
+import { Button, Text } from '~/components/elements/index.js'
+import { AccountAddressEdit, AccountDeleteAddress, Modal } from '../index.js'
 
 export function AccountAddressBook({
   addresses,
-  defaultAddress,
+  defaultAddress
 }: {
-  addresses: any[];
-  defaultAddress: any;
+  addresses: any[]
+  defaultAddress: any
 }) {
-  const [editingAddress, setEditingAddress] = useState(null);
-  const [deletingAddress, setDeletingAddress] = useState(null);
+  const [editingAddress, setEditingAddress] = useState(null)
+  const [deletingAddress, setDeletingAddress] = useState(null)
 
-  const {fullDefaultAddress, addressesWithoutDefault} = useMemo(() => {
+  const { fullDefaultAddress, addressesWithoutDefault } = useMemo(() => {
     const defaultAddressIndex = addresses.findIndex(
-      (address) => address.id === defaultAddress,
-    );
+      (address) => address.id === defaultAddress
+    )
     return {
       addressesWithoutDefault: [
         ...addresses.slice(0, defaultAddressIndex),
-        ...addresses.slice(defaultAddressIndex + 1, addresses.length),
+        ...addresses.slice(defaultAddressIndex + 1, addresses.length)
       ],
-      fullDefaultAddress: addresses[defaultAddressIndex],
-    };
-  }, [addresses, defaultAddress]);
+      fullDefaultAddress: addresses[defaultAddressIndex]
+    }
+  }, [addresses, defaultAddress])
 
   function close() {
-    setEditingAddress(null);
-    setDeletingAddress(null);
+    setEditingAddress(null)
+    setDeletingAddress(null)
   }
 
   function editAddress(address: any) {
-    setEditingAddress(address);
+    setEditingAddress(address)
   }
 
   return (
@@ -66,7 +65,7 @@ export function AccountAddressBook({
               onClick={() => {
                 editAddress({
                   /** empty address */
-                });
+                })
               }}
               variant="secondary"
             >
@@ -81,7 +80,7 @@ export function AccountAddressBook({
                   defaultAddress
                   setDeletingAddress={setDeletingAddress.bind(
                     null,
-                    fullDefaultAddress.originalId,
+                    fullDefaultAddress.originalId
                   )}
                   editAddress={editAddress}
                 />
@@ -92,7 +91,7 @@ export function AccountAddressBook({
                   address={address}
                   setDeletingAddress={setDeletingAddress.bind(
                     null,
-                    address.originalId,
+                    address.originalId
                   )}
                   editAddress={editAddress}
                 />
@@ -102,19 +101,19 @@ export function AccountAddressBook({
         </div>
       </div>
     </>
-  );
+  )
 }
 
 function Address({
   address,
   defaultAddress,
   editAddress,
-  setDeletingAddress,
+  setDeletingAddress
 }: {
-  address: any;
-  defaultAddress?: boolean;
-  editAddress: (address: any) => void;
-  setDeletingAddress: MouseEventHandler<HTMLButtonElement>;
+  address: any
+  defaultAddress?: boolean
+  editAddress: (address: any) => void
+  setDeletingAddress: MouseEventHandler<HTMLButtonElement>
 }) {
   return (
     <div className="lg:p-8 p-6 border border-gray-200 rounded flex flex-col">
@@ -143,7 +142,7 @@ function Address({
       <div className="flex flex-row font-medium mt-6">
         <button
           onClick={() => {
-            editAddress(address);
+            editAddress(address)
           }}
           className="text-left underline text-sm"
         >
@@ -157,5 +156,5 @@ function Address({
         </button>
       </div>
     </div>
-  );
+  )
 }

@@ -1,62 +1,61 @@
-import {useCallback, useState, Suspense} from 'react';
-import {useLocalization, fetchSync} from '@shopify/hydrogen';
-// @ts-expect-error @headlessui/react incompatibility with node16 resolution
-import {Listbox} from '@headlessui/react';
+import { fetchSync, useLocalization } from '@shopify/hydrogen'
+import { Suspense, useCallback, useState } from 'react'
 
-import {IconCheck, IconCaret} from '~/components';
-import {useMemo} from 'react';
+import { Listbox } from '@headlessui/react'
+
 import type {
   Country,
-  CountryCode,
-} from '@shopify/hydrogen/storefront-api-types';
+  CountryCode
+} from '@shopify/hydrogen/storefront-api-types'
+import { useMemo } from 'react'
+import { IconCaret, IconCheck } from '~/components/index.js'
 
 /**
  * A client component that selects the appropriate country to display for products on a website
  */
 export function CountrySelector() {
-  const [listboxOpen, setListboxOpen] = useState(false);
+  const [listboxOpen, setListboxOpen] = useState(false)
   const {
-    country: {isoCode},
-  } = useLocalization();
-  const currentCountry = useMemo<{name: string; isoCode: CountryCode}>(() => {
+    country: { isoCode }
+  } = useLocalization()
+  const currentCountry = useMemo<{ name: string; isoCode: CountryCode }>(() => {
     const regionNamesInEnglish = new Intl.DisplayNames(['en'], {
-      type: 'region',
-    });
+      type: 'region'
+    })
 
     return {
       name: regionNamesInEnglish.of(isoCode)!,
-      isoCode: isoCode as CountryCode,
-    };
-  }, [isoCode]);
+      isoCode: isoCode as CountryCode
+    }
+  }, [isoCode])
 
   const setCountry = useCallback<(country: Country) => void>(
-    ({isoCode: newIsoCode}) => {
-      const currentPath = window.location.pathname;
-      let redirectPath;
+    ({ isoCode: newIsoCode }) => {
+      const currentPath = window.location.pathname
+      let redirectPath
 
       if (newIsoCode !== 'US') {
         if (currentCountry.isoCode === 'US') {
-          redirectPath = `/${newIsoCode.toLowerCase()}${currentPath}`;
+          redirectPath = `/${newIsoCode.toLowerCase()}${currentPath}`
         } else {
           redirectPath = `/${newIsoCode.toLowerCase()}${currentPath.substring(
-            currentPath.indexOf('/', 1),
-          )}`;
+            currentPath.indexOf('/', 1)
+          )}`
         }
       } else {
-        redirectPath = `${currentPath.substring(currentPath.indexOf('/', 1))}`;
+        redirectPath = `${currentPath.substring(currentPath.indexOf('/', 1))}`
       }
 
-      window.location.href = redirectPath;
+      window.location.href = redirectPath
     },
-    [currentCountry],
-  );
+    [currentCountry]
+  )
 
   return (
     <div className="relative">
       <Listbox onChange={setCountry}>
-        {/* @ts-expect-error @headlessui/react incompatibility with node16 resolution */}
-        {({open}) => {
-          setTimeout(() => setListboxOpen(open));
+        {({ open }) => {
+          setTimeout(() => setListboxOpen(open))
           return (
             <>
               <Listbox.Button
@@ -86,50 +85,49 @@ export function CountrySelector() {
                         dark:bg-contrast w-full p-2 transition rounded 
                         flex justify-start items-center text-left cursor-pointer ${
                           active ? 'bg-primary/10' : null
-                        }`;
+                        }`
                       }}
                     />
                   </Suspense>
                 )}
               </Listbox.Options>
             </>
-          );
+          )
         }}
       </Listbox>
     </div>
-  );
+  )
 }
 
 export function Countries({
   selectedCountry,
-  getClassName,
+  getClassName
 }: {
-  selectedCountry: Pick<Country, 'isoCode' | 'name'>;
-  getClassName: (active: boolean) => string;
+  selectedCountry: Pick<Country, 'isoCode' | 'name'>
+  getClassName: (active: boolean) => string
 }) {
-  const response = fetchSync('/api/countries');
+  const response = fetchSync('/api/countries')
 
-  let countries: Country[] | undefined;
+  let countries: Country[] | undefined
 
   if (response.ok) {
-    countries = response.json();
+    countries = response.json()
   } else {
     console.error(
-      `Unable to load available countries ${response.url} returned a ${response.status}`,
-    );
+      `Unable to load available countries ${response.url} returned a ${response.status}`
+    )
   }
 
   return countries ? (
     countries.map((country) => {
-      const isSelected = country.isoCode === selectedCountry.isoCode;
+      const isSelected = country.isoCode === selectedCountry.isoCode
 
       return (
         <Listbox.Option key={country.isoCode} value={country}>
-          {/* @ts-expect-error @headlessui/react incompatibility with node16 resolution */}
-          {({active}) => (
+          {({ active }) => (
             <div
               className={`text-contrast dark:text-primary ${getClassName(
-                active,
+                active
               )}`}
             >
               {country.name}
@@ -141,7 +139,7 @@ export function Countries({
             </div>
           )}
         </Listbox.Option>
-      );
+      )
     })
   ) : (
     <div className="flex justify-center">
@@ -150,5 +148,5 @@ export function Countries({
         <div>Please try again.</div>
       </div>
     </div>
-  );
+  )
 }

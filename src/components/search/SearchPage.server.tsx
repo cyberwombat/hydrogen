@@ -1,12 +1,12 @@
-import {Heading, Input, PageHeader} from '~/components';
-import {Layout} from '~/components/index.server';
+import { Heading, Input, PageHeader } from '~/components/index.js'
+import { Layout } from '~/components/index.server.js'
 
 export function SearchPage({
   searchTerm,
-  children,
+  children
 }: {
-  searchTerm?: string | null;
-  children: React.ReactNode;
+  searchTerm?: string | null
+  children: React.ReactNode
 }) {
   return (
     <Layout>
@@ -29,5 +29,5 @@ export function SearchPage({
       </PageHeader>
       {children}
     </Layout>
-  );
+  )
 }

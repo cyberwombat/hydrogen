@@ -1,41 +1,41 @@
-import {useMemo, useState} from 'react';
-import {useRenderServerComponents} from '~/lib/utils';
+import { useMemo, useState } from 'react'
+import { useRenderServerComponents } from '~/lib/utils.js'
 
-import {Button, Text} from '~/components';
-import {getInputStyleClasses} from '../../lib/styleUtils';
+import { Button, Text } from '~/components/index.js'
+import { getInputStyleClasses } from '../../lib/styleUtils.js'
 
 export function AccountAddressEdit({
   address,
   defaultAddress,
-  close,
+  close
 }: {
-  address: any;
-  defaultAddress: boolean;
-  close: () => void;
+  address: any
+  defaultAddress: boolean
+  close: () => void
 }) {
-  const isNewAddress = useMemo(() => !Object.keys(address).length, [address]);
+  const isNewAddress = useMemo(() => !Object.keys(address).length, [address])
 
-  const [saving, setSaving] = useState(false);
-  const [submitError, setSubmitError] = useState<null | string>(null);
-  const [address1, setAddress1] = useState(address?.address1 || '');
-  const [address2, setAddress2] = useState(address?.address2 || '');
-  const [firstName, setFirstName] = useState(address?.firstName || '');
-  const [lastName, setLastName] = useState(address?.lastName || '');
-  const [company, setCompany] = useState(address?.company || '');
-  const [country, setCountry] = useState(address?.country || '');
-  const [province, setProvince] = useState(address?.province || '');
-  const [city, setCity] = useState(address?.city || '');
-  const [zip, setZip] = useState(address?.zip || '');
-  const [phone, setPhone] = useState(address?.phone || '');
-  const [isDefaultAddress, setIsDefaultAddress] = useState(defaultAddress);
+  const [saving, setSaving] = useState(false)
+  const [submitError, setSubmitError] = useState<null | string>(null)
+  const [address1, setAddress1] = useState(address?.address1 || '')
+  const [address2, setAddress2] = useState(address?.address2 || '')
+  const [firstName, setFirstName] = useState(address?.firstName || '')
+  const [lastName, setLastName] = useState(address?.lastName || '')
+  const [company, setCompany] = useState(address?.company || '')
+  const [country, setCountry] = useState(address?.country || '')
+  const [province, setProvince] = useState(address?.province || '')
+  const [city, setCity] = useState(address?.city || '')
+  const [zip, setZip] = useState(address?.zip || '')
+  const [phone, setPhone] = useState(address?.phone || '')
+  const [isDefaultAddress, setIsDefaultAddress] = useState(defaultAddress)
 
   // Necessary for edits to show up on the main page
-  const renderServerComponents = useRenderServerComponents();
+  const renderServerComponents = useRenderServerComponents()
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+    event.preventDefault()
 
-    setSaving(true);
+    setSaving(true)
 
     const response = await callUpdateAddressApi({
       id: address?.originalId,
@@ -49,18 +49,18 @@ export function AccountAddressEdit({
       city,
       zip,
       phone,
-      isDefaultAddress,
-    });
+      isDefaultAddress
+    })
 
-    setSaving(false);
+    setSaving(false)
 
     if (response.error) {
-      setSubmitError(response.error);
-      return;
+      setSubmitError(response.error)
+      return
     }
 
-    renderServerComponents();
-    close();
+    renderServerComponents()
+    close()
   }
 
   return (
@@ -87,7 +87,7 @@ export function AccountAddressEdit({
               aria-label="First name"
               value={firstName}
               onChange={(event) => {
-                setFirstName(event.target.value);
+                setFirstName(event.target.value)
               }}
             />
           </div>
@@ -103,7 +103,7 @@ export function AccountAddressEdit({
               aria-label="Last name"
               value={lastName}
               onChange={(event) => {
-                setLastName(event.target.value);
+                setLastName(event.target.value)
               }}
             />
           </div>
@@ -118,7 +118,7 @@ export function AccountAddressEdit({
               aria-label="Company"
               value={company}
               onChange={(event) => {
-                setCompany(event.target.value);
+                setCompany(event.target.value)
               }}
             />
           </div>
@@ -134,7 +134,7 @@ export function AccountAddressEdit({
               aria-label="Address line 1"
               value={address1}
               onChange={(event) => {
-                setAddress1(event.target.value);
+                setAddress1(event.target.value)
               }}
             />
           </div>
@@ -149,7 +149,7 @@ export function AccountAddressEdit({
               aria-label="Address line 2"
               value={address2}
               onChange={(event) => {
-                setAddress2(event.target.value);
+                setAddress2(event.target.value)
               }}
             />
           </div>
@@ -165,7 +165,7 @@ export function AccountAddressEdit({
               aria-label="City"
               value={city}
               onChange={(event) => {
-                setCity(event.target.value);
+                setCity(event.target.value)
               }}
             />
           </div>
@@ -181,7 +181,7 @@ export function AccountAddressEdit({
               aria-label="State"
               value={province}
               onChange={(event) => {
-                setProvince(event.target.value);
+                setProvince(event.target.value)
               }}
             />
           </div>
@@ -197,7 +197,7 @@ export function AccountAddressEdit({
               aria-label="Zip"
               value={zip}
               onChange={(event) => {
-                setZip(event.target.value);
+                setZip(event.target.value)
               }}
             />
           </div>
@@ -213,7 +213,7 @@ export function AccountAddressEdit({
               aria-label="Country"
               value={country}
               onChange={(event) => {
-                setCountry(event.target.value);
+                setCountry(event.target.value)
               }}
             />
           </div>
@@ -228,7 +228,7 @@ export function AccountAddressEdit({
               aria-label="Phone"
               value={phone}
               onChange={(event) => {
-                setPhone(event.target.value);
+                setPhone(event.target.value)
               }}
             />
           </div>
@@ -271,7 +271,7 @@ export function AccountAddressEdit({
         </form>
       </div>
     </>
-  );
+  )
 }
 
 export async function callUpdateAddressApi({
@@ -286,20 +286,20 @@ export async function callUpdateAddressApi({
   city,
   phone,
   zip,
-  isDefaultAddress,
+  isDefaultAddress
 }: {
-  id: string;
-  firstName: string;
-  lastName: string;
-  company: string;
-  address1: string;
-  address2: string;
-  country: string;
-  province: string;
-  city: string;
-  phone: string;
-  zip: string;
-  isDefaultAddress: boolean;
+  id: string
+  firstName: string
+  lastName: string
+  company: string
+  address1: string
+  address2: string
+  country: string
+  province: string
+  city: string
+  phone: string
+  zip: string
+  isDefaultAddress: boolean
 }) {
   try {
     const res = await fetch(
@@ -308,7 +308,7 @@ export async function callUpdateAddressApi({
         method: id ? 'PATCH' : 'POST',
         headers: {
           Accept: 'application/json',
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           firstName,
@@ -321,18 +321,18 @@ export async function callUpdateAddressApi({
           city,
           phone,
           zip,
-          isDefaultAddress,
-        }),
-      },
-    );
+          isDefaultAddress
+        })
+      }
+    )
     if (res.ok) {
-      return {};
+      return {}
     } else {
-      return res.json();
+      return res.json()
     }
   } catch (_e) {
     return {
-      error: 'Error saving address. Please try again.',
-    };
+      error: 'Error saving address. Please try again.'
+    }
   }
 }

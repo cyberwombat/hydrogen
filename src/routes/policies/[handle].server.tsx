@@ -1,30 +1,31 @@
 import {
-  useLocalization,
-  useShopQuery,
-  Seo,
-  useServerAnalytics,
-  ShopifyAnalyticsConstants,
   gql,
-  type HydrogenRouteProps,
-} from '@shopify/hydrogen';
-import {Suspense} from 'react';
+  Seo,
+  ShopifyAnalyticsConstants,
+  useLocalization,
+  useServerAnalytics,
+  useShopQuery,
+  type HydrogenRouteProps
+} from '@shopify/hydrogen'
+import { Page, Shop } from '@shopify/hydrogen/storefront-api-types'
+import { Suspense } from 'react'
 
-import {Button, PageHeader, Section} from '~/components';
-import {NotFound, Layout} from '~/components/index.server';
+import { Button, PageHeader, Section } from '~/components/index.js'
+import { Layout, NotFound } from '~/components/index.server.js'
 
-export default function Policy({params}: HydrogenRouteProps) {
+export default function Policy({ params }: HydrogenRouteProps) {
   const {
-    language: {isoCode: languageCode},
-  } = useLocalization();
-  const {handle} = params;
+    language: { isoCode: languageCode }
+  } = useLocalization()
+  const { handle } = params
 
   // standard policy pages
   const policy: Record<string, boolean> = {
     privacyPolicy: handle === 'privacy-policy',
     shippingPolicy: handle === 'shipping-policy',
     termsOfService: handle === 'terms-of-service',
-    refundPolicy: handle === 'refund-policy',
-  };
+    refundPolicy: handle === 'refund-policy'
+  }
 
   // if not a valid policy route, return not found
   if (
@@ -33,35 +34,35 @@ export default function Policy({params}: HydrogenRouteProps) {
     !policy.termsOfService &&
     !policy.refundPolicy
   ) {
-    return <NotFound />;
+    return <NotFound />
   }
 
   // The currently visited policy page key
-  const activePolicy = Object.keys(policy).find((key) => policy[key])!;
+  const activePolicy = Object.keys(policy).find((key) => policy[key])!
 
   const {
-    data: {shop},
-  } = useShopQuery({
+    data: { shop }
+  } = useShopQuery<{ shop: Shop }>({
     query: POLICIES_QUERY,
     variables: {
       languageCode,
-      ...policy,
-    },
-  });
+      ...policy
+    }
+  })
 
-  const page = shop?.[activePolicy];
+  const page = shop?.[activePolicy as keyof Shop] as unknown as Page
 
   // If the policy page is empty, return not found
   if (!page) {
-    return <NotFound />;
+    return <NotFound />
   }
 
   useServerAnalytics({
     shopify: {
       pageType: ShopifyAnalyticsConstants.pageType.page,
-      resourceId: page.id,
-    },
-  });
+      resourceId: page.id
+    }
+  })
 
   return (
     <Layout>
@@ -87,13 +88,13 @@ export default function Policy({params}: HydrogenRouteProps) {
         </PageHeader>
         <div className="flex-grow w-full md:w-7/12">
           <div
-            dangerouslySetInnerHTML={{__html: page.body}}
+            dangerouslySetInnerHTML={{ __html: page.body }}
             className="prose dark:prose-invert"
           />
         </div>
       </Section>
     </Layout>
-  );
+  )
 }
 
 const POLICIES_QUERY = gql`
@@ -127,4 +128,4 @@ const POLICIES_QUERY = gql`
       }
     }
   }
-`;
+`

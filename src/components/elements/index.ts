@@ -1,9 +1,9 @@
-export * from './Icon';
-export {Button} from './Button';
-export {Grid} from './Grid';
-export {Heading} from './Heading';
-export {Input} from './Input';
-export {LogoutButton} from './LogoutButton.client';
-export {Section} from './Section';
-export {Skeleton} from './Skeleton';
-export {Text} from './Text';
+export { Button } from './Button.js'
+export { Grid } from './Grid.js'
+export { Heading } from './Heading.js'
+export * from './Icon.js'
+export { Input } from './Input.js'
+export { LogoutButton } from './LogoutButton.client.js'
+export { Section } from './Section.js'
+export { Skeleton } from './Skeleton.js'
+export { Text } from './Text.js'

@@ -2,32 +2,37 @@ import {
   gql,
   HydrogenResponse,
   useLocalization,
-  useShopQuery,
-} from '@shopify/hydrogen';
+  useShopQuery
+} from '@shopify/hydrogen'
 
-import {Suspense} from 'react';
-import {PRODUCT_CARD_FRAGMENT} from '~/lib/fragments';
-import {Button, FeaturedCollections, PageHeader, Text} from '~/components';
-import {ProductSwimlane, Layout} from '~/components/index.server';
 import type {
   CollectionConnection,
-  ProductConnection,
-} from '@shopify/hydrogen/storefront-api-types';
+  ProductConnection
+} from '@shopify/hydrogen/storefront-api-types'
+import { Suspense } from 'react'
+import {
+  Button,
+  FeaturedCollections,
+  PageHeader,
+  Text
+} from '~/components/index.js'
+import { Layout, ProductSwimlane } from '~/components/index.server.js'
+import { PRODUCT_CARD_FRAGMENT } from '~/lib/fragments.js'
 
 export function NotFound({
   response,
-  type = 'page',
+  type = 'page'
 }: {
-  response?: HydrogenResponse;
-  type?: string;
+  response?: HydrogenResponse
+  type?: string
 }) {
   if (response) {
-    response.status = 404;
-    response.statusText = 'Not found';
+    response.status = 404
+    response.statusText = 'Not found'
   }
 
-  const heading = `We’ve lost this ${type}`;
-  const description = `We couldn’t find the ${type} you’re looking for. Try checking the URL or heading back to the home page.`;
+  const heading = `We’ve lost this ${type}`
+  const description = `We couldn’t find the ${type} you’re looking for. Try checking the URL or heading back to the home page.`
 
   return (
     <Layout>
@@ -43,28 +48,28 @@ export function NotFound({
         <FeaturedSection />
       </Suspense>
     </Layout>
-  );
+  )
 }
 
 function FeaturedSection() {
   const {
-    language: {isoCode: languageCode},
-    country: {isoCode: countryCode},
-  } = useLocalization();
+    language: { isoCode: languageCode },
+    country: { isoCode: countryCode }
+  } = useLocalization()
 
-  const {data} = useShopQuery<{
-    featuredCollections: CollectionConnection;
-    featuredProducts: ProductConnection;
+  const { data } = useShopQuery<{
+    featuredCollections: CollectionConnection
+    featuredProducts: ProductConnection
   }>({
     query: NOT_FOUND_QUERY,
     variables: {
       language: languageCode,
-      country: countryCode,
+      country: countryCode
     },
-    preload: true,
-  });
+    preload: true
+  })
 
-  const {featuredCollections, featuredProducts} = data;
+  const { featuredCollections, featuredProducts } = data
 
   return (
     <>
@@ -76,7 +81,7 @@ function FeaturedSection() {
       )}
       <ProductSwimlane data={featuredProducts.nodes} />
     </>
-  );
+  )
 }
 
 const NOT_FOUND_QUERY = gql`
@@ -102,4 +107,4 @@ const NOT_FOUND_QUERY = gql`
       }
     }
   }
-`;
+`

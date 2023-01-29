@@ -1,5 +1,5 @@
-export {Drawer, useDrawer} from './Drawer.client';
-export {FooterMenu} from './FooterMenu.client';
-export {Header} from './Header.client';
-export {Modal} from './Modal.client';
-export {PageHeader} from './PageHeader';
+export { Drawer, useDrawer } from './Drawer.client.js'
+export { FooterMenu } from './FooterMenu.client.js'
+export { Header } from './Header.client.js'
+export { Modal } from './Modal.client.js'
+export { PageHeader } from './PageHeader.js'

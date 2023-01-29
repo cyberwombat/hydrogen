@@ -1,26 +1,26 @@
-import {gql, useShopQuery} from '@shopify/hydrogen';
+import { gql, useShopQuery } from '@shopify/hydrogen'
 
-import {PRODUCT_CARD_FRAGMENT} from '~/lib/fragments';
-import {FeaturedCollections} from '~/components';
-import {ProductSwimlane} from '~/components/index.server';
-import {PAGINATION_SIZE} from '~/lib/const';
+import { FeaturedCollections } from '~/components/index.js'
+import { ProductSwimlane } from '~/components/index.server.js'
+import { PAGINATION_SIZE } from '~/lib/const.js'
+import { PRODUCT_CARD_FRAGMENT } from '~/lib/fragments.js'
 
 export function NoResultRecommendations({
   country,
-  language,
+  language
 }: {
-  country: string;
-  language: string;
+  country: string
+  language: string
 }) {
-  const {data} = useShopQuery<any>({
+  const { data } = useShopQuery<any>({
     query: SEARCH_NO_RESULTS_QUERY,
     variables: {
       country,
       language,
-      pageBy: PAGINATION_SIZE,
+      pageBy: PAGINATION_SIZE
     },
-    preload: false,
-  });
+    preload: false
+  })
 
   return (
     <>
@@ -33,7 +33,7 @@ export function NoResultRecommendations({
         data={data.featuredProducts.nodes}
       />
     </>
-  );
+  )
 }
 
 const SEARCH_NO_RESULTS_QUERY = gql`
@@ -62,4 +62,4 @@ const SEARCH_NO_RESULTS_QUERY = gql`
       }
     }
   }
-`;
+`

@@ -1,42 +1,42 @@
-import {useCallback, useState} from 'react';
-// @ts-expect-error @headlessui/react incompatibility with node16 resolution
-import {Listbox} from '@headlessui/react';
-import {useProductOptions} from '@shopify/hydrogen';
+import { useCallback, useState } from 'react'
 
-import {Text, IconCheck, IconCaret} from '~/components';
+import { Listbox } from '@headlessui/react'
+import { useProductOptions } from '@shopify/hydrogen'
+
+import { IconCaret, IconCheck, Text } from '~/components/index.js'
 
 export function ProductOptions({
   values,
   ...props
 }: {
-  values: any[];
-  [key: string]: any;
+  values: any[]
+  [key: string]: any
 } & React.ComponentProps<typeof OptionsGrid>) {
-  const asDropdown = values.length > 7;
+  const asDropdown = values.length > 7
 
   return asDropdown ? (
     <OptionsDropdown values={values} {...props} />
   ) : (
     <OptionsGrid values={values} {...props} />
-  );
+  )
 }
 
 function OptionsGrid({
   values,
   name,
-  handleChange,
+  handleChange
 }: {
-  values: string[];
-  name: string;
-  handleChange: (name: string, value: string) => void;
+  values: string[]
+  name: string
+  handleChange: (name: string, value: string) => void
 }) {
-  const {selectedOptions} = useProductOptions();
+  const { selectedOptions } = useProductOptions()
 
   return (
     <>
       {values.map((value) => {
-        const checked = selectedOptions![name] === value;
-        const id = `option-${name}-${value}`;
+        const checked = selectedOptions![name] === value
+        const id = `option-${name}-${value}`
 
         return (
           <Text as="label" key={id} htmlFor={id}>
@@ -57,38 +57,37 @@ function OptionsGrid({
               {value}
             </div>
           </Text>
-        );
+        )
       })}
     </>
-  );
+  )
 }
 
 // TODO: De-dupe UI with CountrySelector
 function OptionsDropdown({
   values,
   name,
-  handleChange,
+  handleChange
 }: {
-  values: string[];
-  name: string;
-  handleChange: (name: string, value: string) => void;
+  values: string[]
+  name: string
+  handleChange: (name: string, value: string) => void
 }) {
-  const [listboxOpen, setListboxOpen] = useState(false);
-  const {selectedOptions} = useProductOptions();
+  const [listboxOpen, setListboxOpen] = useState(false)
+  const { selectedOptions } = useProductOptions()
 
   const updateSelectedOption = useCallback(
     (value: string) => {
-      handleChange(name, value);
+      handleChange(name, value)
     },
-    [name, handleChange],
-  );
+    [name, handleChange]
+  )
 
   return (
     <div className="relative w-full">
       <Listbox onChange={updateSelectedOption} value="">
-        {/* @ts-expect-error @headlessui/react incompatibility with node16 resolution */}
-        {({open}) => {
-          setTimeout(() => setListboxOpen(open));
+        {({ open }) => {
+          setTimeout(() => setListboxOpen(open))
           return (
             <>
               <Listbox.Button
@@ -108,13 +107,12 @@ function OptionsDropdown({
                 }`}
               >
                 {values.map((value) => {
-                  const isSelected = selectedOptions![name] === value;
-                  const id = `option-${name}-${value}`;
+                  const isSelected = selectedOptions![name] === value
+                  const id = `option-${name}-${value}`
 
                   return (
                     <Listbox.Option key={id} value={value}>
-                      {/* @ts-expect-error @headlessui/react incompatibility with node16 resolution */}
-                      {({active}) => (
+                      {({ active }) => (
                         <div
                           className={`text-primary w-full p-2 transition rounded flex justify-start items-center text-left cursor-pointer ${
                             active ? 'bg-primary/10' : null
@@ -129,13 +127,13 @@ function OptionsDropdown({
                         </div>
                       )}
                     </Listbox.Option>
-                  );
+                  )
                 })}
               </Listbox.Options>
             </>
-          );
+          )
         }}
       </Listbox>
     </div>
-  );
+  )
 }

@@ -1,14 +1,14 @@
-import {Image, Link} from '@shopify/hydrogen';
-import type {Collection} from '@shopify/hydrogen/storefront-api-types';
+import { Image, Link } from '@shopify/hydrogen'
+import type { Collection } from '@shopify/hydrogen/storefront-api-types'
 
-import {Heading} from '~/components';
+import { Heading } from '~/components/index.js'
 
 export function CollectionCard({
   collection,
-  loading,
+  loading
 }: {
-  collection: Collection;
-  loading?: HTMLImageElement['loading'];
+  collection: Collection
+  loading?: HTMLImageElement['loading']
 }) {
   return (
     <Link to={`/collections/${collection.handle}`} className="grid gap-4">
@@ -23,7 +23,7 @@ export function CollectionCard({
             widths={[400, 500, 600, 700, 800, 900]}
             loaderOptions={{
               scale: 2,
-              crop: 'center',
+              crop: 'center'
             }}
           />
         )}
@@ -32,5 +32,5 @@ export function CollectionCard({
         {collection.title}
       </Heading>
     </Link>
-  );
+  )
 }

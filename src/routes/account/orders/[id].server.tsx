@@ -2,78 +2,77 @@ import {
   CacheNone,
   flattenConnection,
   gql,
-  type HydrogenRouteProps,
   Image,
   Link,
   Money,
   Seo,
+  useLocalization,
   useRouteParams,
   useSession,
-  useLocalization,
   useShopQuery,
-} from '@shopify/hydrogen';
+  type HydrogenRouteProps
+} from '@shopify/hydrogen'
 import type {
   Customer,
   DiscountApplication,
   DiscountApplicationConnection,
   Order,
-  OrderLineItem,
-} from '@shopify/hydrogen/storefront-api-types';
-import {Suspense} from 'react';
+  OrderLineItem
+} from '@shopify/hydrogen/storefront-api-types'
+import { Suspense } from 'react'
 
-import {Text, PageHeader, Heading} from '~/components';
-import {Layout} from '~/components/index.server';
-import {statusMessage} from '~/lib/utils';
+import { Heading, PageHeader, Text } from '~/components/index.js'
+import { Layout } from '~/components/index.server.js'
+import { statusMessage } from '~/lib/utils.js'
 
-export default function OrderDetails({response}: HydrogenRouteProps) {
-  const {id} = useRouteParams();
+export default function OrderDetails({ response }: HydrogenRouteProps) {
+  const { id } = useRouteParams()
 
-  response.cache(CacheNone());
+  response.cache(CacheNone())
 
   const {
-    language: {isoCode: languageCode},
-    country: {isoCode: countryCode},
-  } = useLocalization();
-  const {customerAccessToken} = useSession();
+    language: { isoCode: languageCode },
+    country: { isoCode: countryCode }
+  } = useLocalization()
+  const { customerAccessToken } = useSession()
 
-  if (!customerAccessToken) return response.redirect('/account/login');
-  if (!id) return response.redirect('/account/');
+  if (!customerAccessToken) return response.redirect('/account/login')
+  if (!id) return response.redirect('/account/')
 
-  const {data} = useShopQuery<{
-    customer?: Customer;
+  const { data } = useShopQuery<{
+    customer?: Customer
   }>({
     query: ORDER_QUERY,
     variables: {
       customerAccessToken,
       orderId: `id:${id}`,
       language: languageCode,
-      country: countryCode,
+      country: countryCode
     },
-    cache: CacheNone(),
-  });
+    cache: CacheNone()
+  })
 
   const [order] = flattenConnection<Order>(data?.customer?.orders ?? {}) || [
-    null,
-  ];
+    null
+  ]
 
-  if (!order) return null;
+  if (!order) return null
 
-  const lineItems = flattenConnection<OrderLineItem>(order.lineItems!);
+  const lineItems = flattenConnection<OrderLineItem>(order.lineItems!)
   const discountApplications = flattenConnection<DiscountApplication>(
-    order.discountApplications as DiscountApplicationConnection,
-  );
+    order.discountApplications as DiscountApplicationConnection
+  )
 
-  const firstDiscount = discountApplications[0]?.value;
-  const discountValue =
-    firstDiscount?.__typename === 'MoneyV2' && firstDiscount;
+  const firstDiscount = discountApplications[0]?.value
+  const discountValue = firstDiscount?.__typename === 'MoneyV2' && firstDiscount
   const discountPercentage =
     firstDiscount?.__typename === 'PricingPercentageValue' &&
-    firstDiscount?.percentage;
+    firstDiscount?.percentage
 
   return (
     <Layout>
       <Suspense>
-        <Seo type="noindex" data={{title: `Order ${order.name}`}} />
+        <Seo type="noindex" data={{ title: `Order ${order.name}` }} />
       </Suspense>
       <PageHeader heading={`Order detail`}>
         <Link to="/account">
@@ -135,7 +134,7 @@ export default function OrderDetails({response}: HydrogenRouteProps) {
                                 alt={lineItem.variant.image.altText!}
                                 loaderOptions={{
                                   scale: 2,
-                                  crop: 'center',
+                                  crop: 'center'
                                 }}
                               />
                             </div>
@@ -315,7 +314,7 @@ export default function OrderDetails({response}: HydrogenRouteProps) {
         </div>
       </div>
     </Layout>
-  );
+  )
 }
 
 // @see: https://shopify.dev/api/storefront/2022-07/objects/Order#fields
@@ -358,7 +357,7 @@ const ORDER_QUERY = gql`
   fragment Image on Image {
     altText
     height
-    src: url(transform: {crop: CENTER, maxHeight: 96, maxWidth: 96, scale: 2})
+    src: url(transform: { crop: CENTER, maxHeight: 96, maxWidth: 96, scale: 2 })
     id
     width
   }
@@ -439,4 +438,4 @@ const ORDER_QUERY = gql`
       }
     }
   }
-`;
+`

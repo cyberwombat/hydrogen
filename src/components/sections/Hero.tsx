@@ -1,11 +1,11 @@
-import {Image, Link, Video} from '@shopify/hydrogen';
-import type {Media} from '@shopify/hydrogen/storefront-api-types';
+import { Image, Link, Video } from '@shopify/hydrogen'
+import type { Media } from '@shopify/hydrogen/storefront-api-types'
 
-import {Heading, Text} from '~/components';
+import { Heading, Text } from '~/components/index.js'
 
 interface Metafield {
-  value: string;
-  reference?: object;
+  value: string
+  reference?: object
 }
 
 export function Hero({
@@ -17,17 +17,17 @@ export function Hero({
   loading,
   spread,
   spreadSecondary,
-  top,
+  top
 }: {
-  byline: Metafield;
-  cta: Metafield;
-  handle: string;
-  heading: Metafield;
-  height?: 'full';
-  loading?: 'eager' | 'lazy';
-  spread: Metafield;
-  spreadSecondary: Metafield;
-  top?: boolean;
+  byline: Metafield
+  cta: Metafield
+  handle: string
+  heading: Metafield
+  height?: 'full'
+  loading?: 'eager' | 'lazy'
+  spread: Metafield
+  spreadSecondary: Metafield
+  top?: boolean
 }) {
   return (
     <Link to={`/collections/${handle}`}>
@@ -67,7 +67,7 @@ export function Hero({
                 sizes="(min-width: 80em) 700, (min-width: 48em) 450, 500"
                 widths={[450, 700]}
                 width={375}
-                data={spreadSecondary.reference}
+                data={spreadSecondary.reference as Media}
               />
             </div>
           )}
@@ -87,16 +87,16 @@ export function Hero({
         </div>
       </section>
     </Link>
-  );
+  )
 }
 
 interface SpreadMediaProps {
-  data: Media;
-  loading?: HTMLImageElement['loading'];
-  scale?: 2 | 3;
-  sizes: string;
-  width: number;
-  widths: number[];
+  data: Media
+  loading?: HTMLImageElement['loading']
+  scale?: 2 | 3
+  sizes: string
+  width: number
+  widths: number[]
 }
 
 function SpreadMedia({
@@ -105,12 +105,12 @@ function SpreadMedia({
   scale,
   sizes,
   width,
-  widths,
+  widths
 }: SpreadMediaProps) {
   if (data.mediaContentType === 'VIDEO') {
     return (
       <Video
-        previewImageOptions={{scale, src: data.previewImage!.url}}
+        previewImageOptions={{ scale, src: data.previewImage!.url }}
         width={scale! * width}
         className="block object-cover w-full h-full"
         data={data}
@@ -120,7 +120,7 @@ function SpreadMedia({
         playsInline
         autoPlay
       />
-    );
+    )
   }
 
   if (data.mediaContentType === 'IMAGE') {
@@ -134,10 +134,10 @@ function SpreadMedia({
         data={data.image}
         loading={loading}
         width={width}
-        loaderOptions={{scale, crop: 'center'}}
+        loaderOptions={{ scale, crop: 'center' }}
       />
-    );
+    )
   }
 
-  return null;
+  return null
 }

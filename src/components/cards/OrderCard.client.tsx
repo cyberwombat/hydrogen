@@ -1,16 +1,16 @@
-import {Image, Link, flattenConnection} from '@shopify/hydrogen';
+import { flattenConnection, Image, Link } from '@shopify/hydrogen'
 import type {
   Order,
-  OrderLineItem,
-} from '@shopify/hydrogen/storefront-api-types';
+  OrderLineItem
+} from '@shopify/hydrogen/storefront-api-types'
 
-import {Heading, Text} from '~/components';
-import {statusMessage} from '~/lib/utils';
+import { Heading, Text } from '~/components/index.js'
+import { statusMessage } from '~/lib/utils.js'
 
-export function OrderCard({order}: {order: Order}) {
-  if (!order?.id) return null;
-  const legacyOrderId = order!.id!.split('/').pop()!.split('?')[0];
-  const lineItems = flattenConnection<OrderLineItem>(order?.lineItems);
+export function OrderCard({ order }: { order: Order }) {
+  if (!order?.id) return null
+  const legacyOrderId = order!.id!.split('/').pop()!.split('?')[0]
+  const lineItems = flattenConnection<OrderLineItem>(order?.lineItems)
 
   return (
     <li className="grid text-center border rounded">
@@ -28,7 +28,7 @@ export function OrderCard({order}: {order: Order}) {
               alt={lineItems[0].variant?.image?.altText ?? 'Order image'}
               // @ts-expect-error Stock line item variant image type has `url` as optional
               data={lineItems[0].variant?.image}
-              loaderOptions={{scale: 2, crop: 'center'}}
+              loaderOptions={{ scale: 2, crop: 'center' }}
             />
           </div>
         )}
@@ -83,5 +83,5 @@ export function OrderCard({order}: {order: Order}) {
         </Link>
       </div>
     </li>
-  );
+  )
 }

@@ -1,39 +1,39 @@
-import {Suspense} from 'react';
 import {
-  useShopQuery,
   CacheLong,
   CacheNone,
-  Seo,
   gql,
-  type HydrogenRouteProps,
-  HydrogenRequest,
   HydrogenApiRouteOptions,
-} from '@shopify/hydrogen';
+  HydrogenRequest,
+  Seo,
+  useShopQuery,
+  type HydrogenRouteProps
+} from '@shopify/hydrogen'
+import type { Shop } from '@shopify/hydrogen/storefront-api-types'
+import { Suspense } from 'react'
+import { AccountLoginForm } from '~/components/index.js'
+import { Layout } from '~/components/index.server.js'
 
-import {AccountLoginForm} from '~/components';
-import {Layout} from '~/components/index.server';
-
-export default function Login({response}: HydrogenRouteProps) {
-  response.cache(CacheNone());
+export default function Login({ response }: HydrogenRouteProps) {
+  response.cache(CacheNone())
 
   const {
     data: {
-      shop: {name},
-    },
-  } = useShopQuery({
+      shop: { name }
+    }
+  } = useShopQuery<{ shop: Shop }>({
     query: SHOP_QUERY,
     cache: CacheLong(),
-    preload: '*',
-  });
+    preload: '*'
+  })
 
   return (
     <Layout>
       <Suspense>
-        <Seo type="noindex" data={{title: 'Login'}} />
+        <Seo type="noindex" data={{ title: 'Login' }} />
       </Suspense>
       <AccountLoginForm shopName={name} />
     </Layout>
-  );
+  )
 }
 
 const SHOP_QUERY = gql`
@@ -42,53 +42,53 @@ const SHOP_QUERY = gql`
       name
     }
   }
-`;
+`
 
 export async function api(
   request: HydrogenRequest,
-  {session, queryShop}: HydrogenApiRouteOptions,
+  { session, queryShop }: HydrogenApiRouteOptions
 ) {
   if (!session) {
-    return new Response('Session storage not available.', {status: 400});
+    return new Response('Session storage not available.', { status: 400 })
   }
 
-  const jsonBody = await request.json();
+  const jsonBody = await request.json()
 
   if (!jsonBody.email || !jsonBody.password) {
     return new Response(
-      JSON.stringify({error: 'Incorrect email or password.'}),
-      {status: 400},
-    );
+      JSON.stringify({ error: 'Incorrect email or password.' }),
+      { status: 400 }
+    )
   }
 
-  const {data, errors} = await queryShop<{customerAccessTokenCreate: any}>({
+  const { data, errors } = await queryShop<{ customerAccessTokenCreate: any }>({
     query: LOGIN_MUTATION,
     variables: {
       input: {
         email: jsonBody.email,
-        password: jsonBody.password,
-      },
+        password: jsonBody.password
+      }
     },
     // @ts-expect-error `queryShop.cache` is not yet supported but soon will be.
-    cache: CacheNone(),
-  });
+    cache: CacheNone()
+  })
 
   if (data?.customerAccessTokenCreate?.customerAccessToken?.accessToken) {
     await session.set(
       'customerAccessToken',
-      data.customerAccessTokenCreate.customerAccessToken.accessToken,
-    );
+      data.customerAccessTokenCreate.customerAccessToken.accessToken
+    )
 
     return new Response(null, {
-      status: 200,
-    });
+      status: 200
+    })
   } else {
     return new Response(
       JSON.stringify({
-        error: data?.customerAccessTokenCreate?.customerUserErrors ?? errors,
+        error: data?.customerAccessTokenCreate?.customerUserErrors ?? errors
       }),
-      {status: 401},
-    );
+      { status: 401 }
+    )
   }
 }
 
@@ -106,4 +106,4 @@ const LOGIN_MUTATION = gql`
       }
     }
   }
-`;
+`

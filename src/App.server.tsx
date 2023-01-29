@@ -1,37 +1,37 @@
-import {Suspense} from 'react';
-import renderHydrogen from '@shopify/hydrogen/entry-server';
 import {
+  CartProvider,
   FileRoutes,
-  type HydrogenRouteProps,
   PerformanceMetrics,
   PerformanceMetricsDebug,
   Route,
   Router,
+  Seo,
   ShopifyAnalytics,
   ShopifyProvider,
-  CartProvider,
-  useSession,
   useServerAnalytics,
-  Seo,
-} from '@shopify/hydrogen';
-import {HeaderFallback, EventsListener} from '~/components';
-import type {CountryCode} from '@shopify/hydrogen/storefront-api-types';
-import {NotFound} from '~/components/index.server';
+  useSession,
+  type HydrogenRouteProps
+} from '@shopify/hydrogen'
+import renderHydrogen from '@shopify/hydrogen/entry-server'
+import type { CountryCode } from '@shopify/hydrogen/storefront-api-types'
+import { Suspense } from 'react'
+import { EventsListener, HeaderFallback } from '~/components/index.js'
+import { NotFound } from '~/components/index.server.js'
 
-function App({request}: HydrogenRouteProps) {
-  const pathname = new URL(request.normalizedUrl).pathname;
-  const localeMatch = /^\/([a-z]{2})(\/|$)/i.exec(pathname);
-  const countryCode = localeMatch ? (localeMatch[1] as CountryCode) : undefined;
+function App({ request }: HydrogenRouteProps) {
+  const pathname = new URL(request.normalizedUrl).pathname
+  const localeMatch = /^\/([a-z]{2})(\/|$)/i.exec(pathname)
+  const countryCode = localeMatch ? (localeMatch[1] as CountryCode) : undefined
 
-  const isHome = pathname === `/${countryCode ? countryCode + '/' : ''}`;
+  const isHome = pathname === `/${countryCode ? countryCode + '/' : ''}`
 
-  const {customerAccessToken} = useSession();
+  const { customerAccessToken } = useSession()
 
   useServerAnalytics({
     shopify: {
-      isLoggedIn: !!customerAccessToken,
-    },
-  });
+      isLoggedIn: !!customerAccessToken
+    }
+  })
 
   return (
     <Suspense fallback={<HeaderFallback isHome={isHome} />}>
@@ -43,7 +43,7 @@ function App({request}: HydrogenRouteProps) {
             title: 'Hydrogen',
             description:
               "A custom storefront powered by Hydrogen, Shopify's React-based framework for building headless.",
-            titleTemplate: `%s · Hydrogen`,
+            titleTemplate: `%s · Hydrogen`
           }}
         />
         <CartProvider
@@ -62,7 +62,7 @@ function App({request}: HydrogenRouteProps) {
         <ShopifyAnalytics cookieDomain="hydrogen.shop" />
       </ShopifyProvider>
     </Suspense>
-  );
+  )
 }
 
-export default renderHydrogen(App);
+export default renderHydrogen.default(App)

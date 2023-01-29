@@ -1,79 +1,79 @@
-import {useState} from 'react';
-import {useNavigate} from '@shopify/hydrogen/client';
-import {getInputStyleClasses} from '../../lib/styleUtils';
+import { useNavigate } from '@shopify/hydrogen/client'
+import { useState } from 'react'
+import { getInputStyleClasses } from '../../lib/styleUtils.js'
 
 export function AccountActivateForm({
   id,
-  activationToken,
+  activationToken
 }: {
-  id: string;
-  activationToken: string;
+  id: string
+  activationToken: string
 }) {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
-  const [submitError, setSubmitError] = useState<null | string>(null);
-  const [password, setPassword] = useState('');
-  const [passwordError, setPasswordError] = useState<null | string>(null);
-  const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [submitError, setSubmitError] = useState<null | string>(null)
+  const [password, setPassword] = useState('')
+  const [passwordError, setPasswordError] = useState<null | string>(null)
+  const [passwordConfirm, setPasswordConfirm] = useState('')
   const [passwordConfirmError, setPasswordConfirmError] = useState<
     null | string
-  >(null);
+  >(null)
 
   function passwordValidation(
-    form: HTMLFormElement & {password: HTMLInputElement},
+    form: HTMLFormElement & { password: HTMLInputElement }
   ) {
-    setPasswordError(null);
-    setPasswordConfirmError(null);
+    setPasswordError(null)
+    setPasswordConfirmError(null)
 
-    let hasError = false;
+    let hasError = false
 
     if (!form.password.validity.valid) {
-      hasError = true;
+      hasError = true
       setPasswordError(
         form.password.validity.valueMissing
           ? 'Please enter a password'
-          : 'Passwords must be at least 6 characters',
-      );
+          : 'Passwords must be at least 6 characters'
+      )
     }
 
     if (!form.passwordConfirm.validity.valid) {
-      hasError = true;
+      hasError = true
       setPasswordConfirmError(
         form.password.validity.valueMissing
           ? 'Please re-enter a password'
-          : 'Passwords must be at least 6 characters',
-      );
+          : 'Passwords must be at least 6 characters'
+      )
     }
 
     if (password !== passwordConfirm) {
-      hasError = true;
-      setPasswordConfirmError('The two passwords entered did not match.');
+      hasError = true
+      setPasswordConfirmError('The two passwords entered did not match.')
     }
 
-    return hasError;
+    return hasError
   }
 
   async function onSubmit(
-    event: React.FormEvent<HTMLFormElement & {password: HTMLInputElement}>,
+    event: React.FormEvent<HTMLFormElement & { password: HTMLInputElement }>
   ) {
-    event.preventDefault();
+    event.preventDefault()
 
     if (passwordValidation(event.currentTarget)) {
-      return;
+      return
     }
 
     const response = await callActivateApi({
       id,
       activationToken,
-      password,
-    });
+      password
+    })
 
     if (response.error) {
-      setSubmitError(response.error);
-      return;
+      setSubmitError(response.error)
+      return
     }
 
-    navigate('/account');
+    navigate('/account')
   }
 
   return (
@@ -100,7 +100,7 @@ export function AccountActivateForm({
               minLength={8}
               required
               onChange={(event) => {
-                setPassword(event.target.value);
+                setPassword(event.target.value)
               }}
             />
             <p
@@ -124,7 +124,7 @@ export function AccountActivateForm({
               required
               minLength={8}
               onChange={(event) => {
-                setPasswordConfirm(event.target.value);
+                setPasswordConfirm(event.target.value)
               }}
             />
             <p
@@ -146,35 +146,35 @@ export function AccountActivateForm({
         </form>
       </div>
     </div>
-  );
+  )
 }
 
 async function callActivateApi({
   id,
   activationToken,
-  password,
+  password
 }: {
-  id: string;
-  activationToken: string;
-  password: string;
+  id: string
+  activationToken: string
+  password: string
 }) {
   try {
     const res = await fetch(`/account/activate`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({id, activationToken, password}),
-    });
+      body: JSON.stringify({ id, activationToken, password })
+    })
     if (res.ok) {
-      return {};
+      return {}
     } else {
-      return res.json();
+      return res.json()
     }
   } catch (error: any) {
     return {
-      error: error.toString(),
-    };
+      error: error.toString()
+    }
   }
 }

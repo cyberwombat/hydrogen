@@ -1,29 +1,18 @@
-import {Suspense} from 'react';
 import {
   CacheNone,
   flattenConnection,
   gql,
   Seo,
-  useSession,
   useLocalization,
-  useShopQuery,
-  type HydrogenRouteProps,
-  type HydrogenRequest,
-  type HydrogenApiRouteOptions,
   useServerAnalytics,
-} from '@shopify/hydrogen';
+  useSession,
+  useShopQuery,
+  type HydrogenApiRouteOptions,
+  type HydrogenRequest,
+  type HydrogenRouteProps
+} from '@shopify/hydrogen'
+import { Suspense } from 'react'
 
-import {PRODUCT_CARD_FRAGMENT} from '~/lib/fragments';
-import {getApiErrorMessage} from '~/lib/utils';
-import {
-  AccountAddressBook,
-  AccountDetails,
-  AccountOrderHistory,
-  FeaturedCollections,
-  LogoutButton,
-  PageHeader,
-} from '~/components';
-import {Layout, ProductSwimlane} from '~/components/index.server';
 import type {
   Collection,
   CollectionConnection,
@@ -31,57 +20,68 @@ import type {
   MailingAddress,
   Order,
   Product,
-  ProductConnection,
-} from '@shopify/hydrogen/storefront-api-types';
+  ProductConnection
+} from '@shopify/hydrogen/storefront-api-types'
+import {
+  AccountAddressBook,
+  AccountDetails,
+  AccountOrderHistory,
+  FeaturedCollections,
+  LogoutButton,
+  PageHeader
+} from '~/components/index.js'
+import { Layout, ProductSwimlane } from '~/components/index.server.js'
+import { PRODUCT_CARD_FRAGMENT } from '~/lib/fragments.js'
+import { getApiErrorMessage } from '~/lib/utils.js'
 
-export default function Account({response}: HydrogenRouteProps) {
-  response.cache(CacheNone());
+export default function Account({ response }: HydrogenRouteProps) {
+  response.cache(CacheNone())
 
   const {
-    language: {isoCode: languageCode},
-    country: {isoCode: countryCode},
-  } = useLocalization();
-  const {customerAccessToken} = useSession();
+    language: { isoCode: languageCode },
+    country: { isoCode: countryCode }
+  } = useLocalization()
+  const { customerAccessToken } = useSession()
 
-  if (!customerAccessToken) return response.redirect('/account/login');
+  if (!customerAccessToken) return response.redirect('/account/login')
 
-  const {data} = useShopQuery<{
-    customer: Customer;
-    featuredCollections: CollectionConnection;
-    featuredProducts: ProductConnection;
+  const { data } = useShopQuery<{
+    customer: Customer
+    featuredCollections: CollectionConnection
+    featuredProducts: ProductConnection
   }>({
     query: CUSTOMER_QUERY,
     variables: {
       customerAccessToken,
       language: languageCode,
-      country: countryCode,
+      country: countryCode
     },
-    cache: CacheNone(),
-  });
+    cache: CacheNone()
+  })
 
-  const {customer, featuredCollections, featuredProducts} = data;
+  const { customer, featuredCollections, featuredProducts } = data
 
-  if (!customer) return response.redirect('/account/login');
+  if (!customer) return response.redirect('/account/login')
 
   // The logged-in analytics state.
   useServerAnalytics({
     shopify: {
-      customerId: customer.id,
-    },
-  });
+      customerId: customer.id
+    }
+  })
 
   const addresses = flattenConnection<MailingAddress>(customer.addresses).map(
     (address) => ({
       ...address,
       id: address.id!.substring(0, address.id!.lastIndexOf('?')),
-      originalId: address.id,
-    }),
-  );
+      originalId: address.id
+    })
+  )
 
   const defaultAddress = customer?.defaultAddress?.id?.substring(
     0,
-    customer.defaultAddress.id.lastIndexOf('?'),
-  );
+    customer.defaultAddress.id.lastIndexOf('?')
+  )
 
   return (
     <>
@@ -97,7 +97,7 @@ export default function Account({response}: HydrogenRouteProps) {
         }
       />
     </>
-  );
+  )
 }
 
 function AuthenticatedAccount({
@@ -105,26 +105,26 @@ function AuthenticatedAccount({
   addresses,
   defaultAddress,
   featuredCollections,
-  featuredProducts,
+  featuredProducts
 }: {
-  customer: Customer;
-  addresses: any[];
-  defaultAddress?: string;
-  featuredCollections: Collection[];
-  featuredProducts: Product[];
+  customer: Customer
+  addresses: any[]
+  defaultAddress?: string
+  featuredCollections: Collection[]
+  featuredProducts: Product[]
 }) {
-  const orders = flattenConnection(customer?.orders) || [];
+  const orders = flattenConnection(customer?.orders) || []
 
   const heading = customer
     ? customer.firstName
       ? `Welcome, ${customer.firstName}.`
       : `Welcome to your account.`
-    : 'Account Details';
+    : 'Account Details'
 
   return (
     <Layout>
       <Suspense>
-        <Seo type="noindex" data={{title: 'Account details'}} />
+        <Seo type="noindex" data={{ title: 'Account details' }} />
       </Suspense>
       <PageHeader heading={heading}>
         <LogoutButton>Sign out</LogoutButton>
@@ -150,65 +150,66 @@ function AuthenticatedAccount({
         </>
       )}
     </Layout>
-  );
+  )
 }
 
 export async function api(
   request: HydrogenRequest,
-  {session, queryShop}: HydrogenApiRouteOptions,
+  { session, queryShop }: HydrogenApiRouteOptions
 ) {
   if (request.method !== 'PATCH' && request.method !== 'DELETE') {
     return new Response(null, {
       status: 405,
       headers: {
-        Allow: 'PATCH,DELETE',
-      },
-    });
+        Allow: 'PATCH,DELETE'
+      }
+    })
   }
 
   if (!session) {
     return new Response('Session storage not available.', {
-      status: 400,
-    });
+      status: 400
+    })
   }
 
-  const {customerAccessToken} = await session.get();
+  const { customerAccessToken } = await session.get()
 
-  if (!customerAccessToken) return new Response(null, {status: 401});
+  if (!customerAccessToken) return new Response(null, { status: 401 })
 
-  const {email, phone, firstName, lastName, newPassword} = await request.json();
+  const { email, phone, firstName, lastName, newPassword } =
+    await request.json()
 
   interface Customer {
-    email?: string;
-    phone?: string;
-    firstName?: string;
-    lastName?: string;
-    password?: string;
+    email?: string
+    phone?: string
+    firstName?: string
+    lastName?: string
+    password?: string
   }
 
-  const customer: Customer = {};
+  const customer: Customer = {}
 
-  if (email) customer.email = email;
-  if (phone) customer.phone = phone;
-  if (firstName) customer.firstName = firstName;
-  if (lastName) customer.lastName = lastName;
-  if (newPassword) customer.password = newPassword;
+  if (email) customer.email = email
+  if (phone) customer.phone = phone
+  if (firstName) customer.firstName = firstName
+  if (lastName) customer.lastName = lastName
+  if (newPassword) customer.password = newPassword
 
-  const {data, errors} = await queryShop<{customerUpdate: any}>({
+  const { data, errors } = await queryShop<{ customerUpdate: any }>({
     query: CUSTOMER_UPDATE_MUTATION,
     variables: {
       customer,
-      customerAccessToken,
+      customerAccessToken
     },
     // @ts-expect-error `queryShop.cache` is not yet supported but soon will be.
-    cache: CacheNone(),
-  });
+    cache: CacheNone()
+  })
 
-  const error = getApiErrorMessage('customerUpdate', data, errors);
+  const error = getApiErrorMessage('customerUpdate', data, errors)
 
-  if (error) return new Response(JSON.stringify({error}), {status: 400});
+  if (error) return new Response(JSON.stringify({ error }), { status: 400 })
 
-  return new Response(null);
+  return new Response(null)
 }
 
 const CUSTOMER_QUERY = gql`
@@ -296,7 +297,7 @@ const CUSTOMER_QUERY = gql`
       }
     }
   }
-`;
+`
 
 const CUSTOMER_UPDATE_MUTATION = gql`
   mutation customerUpdate(
@@ -314,4 +315,4 @@ const CUSTOMER_UPDATE_MUTATION = gql`
       }
     }
   }
-`;
+`

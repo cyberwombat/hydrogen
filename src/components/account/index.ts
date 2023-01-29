@@ -1,11 +1,11 @@
-export {AccountActivateForm} from './AccountActivateForm.client';
-export {AccountAddressBook} from './AccountAddressBook.client';
-export {AccountAddressEdit} from './AccountAddressEdit.client';
-export {AccountCreateForm} from './AccountCreateForm.client';
-export {AccountDeleteAddress} from './AccountDeleteAddress.client';
-export {AccountDetails} from './AccountDetails.client';
-export {AccountDetailsEdit} from './AccountDetailsEdit.client';
-export {AccountLoginForm} from './AccountLoginForm.client';
-export {AccountOrderHistory} from './AccountOrderHistory.client';
-export {AccountPasswordResetForm} from './AccountPasswordResetForm.client';
-export {AccountRecoverForm} from './AccountRecoverForm.client';
+export { AccountActivateForm } from './AccountActivateForm.client.js'
+export { AccountAddressBook } from './AccountAddressBook.client.js'
+export { AccountAddressEdit } from './AccountAddressEdit.client.js'
+export { AccountCreateForm } from './AccountCreateForm.client.js'
+export { AccountDeleteAddress } from './AccountDeleteAddress.client.js'
+export { AccountDetails } from './AccountDetails.client.js'
+export { AccountDetailsEdit } from './AccountDetailsEdit.client.js'
+export { AccountLoginForm } from './AccountLoginForm.client.js'
+export { AccountOrderHistory } from './AccountOrderHistory.client.js'
+export { AccountPasswordResetForm } from './AccountPasswordResetForm.client.js'
+export { AccountRecoverForm } from './AccountRecoverForm.client.js'

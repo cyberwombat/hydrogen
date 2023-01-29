@@ -1,82 +1,82 @@
-import {useState} from 'react';
-import {useNavigate} from '@shopify/hydrogen/client';
-import {getInputStyleClasses} from '../../lib/styleUtils';
+import { useNavigate } from '@shopify/hydrogen/client'
+import { useState } from 'react'
+import { getInputStyleClasses } from '../../lib/styleUtils.js'
 
 interface FormElements {
-  password: HTMLInputElement;
-  passwordConfirm: HTMLInputElement;
+  password: HTMLInputElement
+  passwordConfirm: HTMLInputElement
 }
 
 export function AccountPasswordResetForm({
   id,
-  resetToken,
+  resetToken
 }: {
-  id: string;
-  resetToken: string;
+  id: string
+  resetToken: string
 }) {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const [password, setPassword] = useState('');
-  const [passwordError, setPasswordError] = useState<string | null>(null);
-  const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [password, setPassword] = useState('')
+  const [passwordError, setPasswordError] = useState<string | null>(null)
+  const [passwordConfirm, setPasswordConfirm] = useState('')
   const [passwordConfirmError, setPasswordConfirmError] = useState<
     string | null
-  >(null);
+  >(null)
 
   function passwordValidation(form: HTMLFormElement & FormElements) {
-    setPasswordError(null);
-    setPasswordConfirmError(null);
+    setPasswordError(null)
+    setPasswordConfirmError(null)
 
-    let hasError = false;
+    let hasError = false
 
     if (!form.password.validity.valid) {
-      hasError = true;
+      hasError = true
       setPasswordError(
         form.password.validity.valueMissing
           ? 'Please enter a password'
-          : 'Passwords must be at least 6 characters',
-      );
+          : 'Passwords must be at least 6 characters'
+      )
     }
 
     if (!form.passwordConfirm.validity.valid) {
-      hasError = true;
+      hasError = true
       setPasswordConfirmError(
         form.password.validity.valueMissing
           ? 'Please re-enter a password'
-          : 'Passwords must be at least 6 characters',
-      );
+          : 'Passwords must be at least 6 characters'
+      )
     }
 
     if (password !== passwordConfirm) {
-      hasError = true;
-      setPasswordConfirmError('The two password entered did not match.');
+      hasError = true
+      setPasswordConfirmError('The two password entered did not match.')
     }
 
-    return hasError;
+    return hasError
   }
 
   async function onSubmit(
-    event: React.FormEvent<HTMLFormElement & FormElements>,
+    event: React.FormEvent<HTMLFormElement & FormElements>
   ) {
-    event.preventDefault();
+    event.preventDefault()
 
     if (passwordValidation(event.currentTarget)) {
-      return;
+      return
     }
 
     const response = await callPasswordResetApi({
       id,
       resetToken,
-      password,
-    });
+      password
+    })
 
     if (response.error) {
-      setSubmitError(response.error);
-      return;
+      setSubmitError(response.error)
+      return
     }
 
-    navigate('/account');
+    navigate('/account')
   }
 
   return (
@@ -105,7 +105,7 @@ export function AccountPasswordResetForm({
               minLength={8}
               required
               onChange={(event) => {
-                setPassword(event.target.value);
+                setPassword(event.target.value)
               }}
             />
             <p
@@ -129,7 +129,7 @@ export function AccountPasswordResetForm({
               required
               minLength={8}
               onChange={(event) => {
-                setPasswordConfirm(event.target.value);
+                setPasswordConfirm(event.target.value)
               }}
             />
             <p
@@ -151,36 +151,36 @@ export function AccountPasswordResetForm({
         </form>
       </div>
     </div>
-  );
+  )
 }
 
 export async function callPasswordResetApi({
   id,
   resetToken,
-  password,
+  password
 }: {
-  id: string;
-  resetToken: string;
-  password: string;
+  id: string
+  resetToken: string
+  password: string
 }) {
   try {
     const res = await fetch(`/account/reset`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({id, resetToken, password}),
-    });
+      body: JSON.stringify({ id, resetToken, password })
+    })
 
     if (res.ok) {
-      return {};
+      return {}
     } else {
-      return res.json();
+      return res.json()
     }
   } catch (error: any) {
     return {
-      error: error.toString(),
-    };
+      error: error.toString()
+    }
   }
 }

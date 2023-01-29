@@ -1,44 +1,44 @@
-import {useRef} from 'react';
-import {useScroll} from 'react-use';
 import {
-  Link,
-  useCart,
   CartLineProvider,
   CartShopPayButton,
+  Link,
   Money,
-} from '@shopify/hydrogen';
+  useCart
+} from '@shopify/hydrogen'
+import { useRef } from 'react'
+import { useScroll } from 'react-use'
 
-import {Button, Text, CartLineItem, CartEmpty} from '~/components';
+import { Button, CartEmpty, CartLineItem, Text } from '~/components/index.js'
 
 export function CartDetails({
   layout,
-  onClose,
+  onClose
 }: {
-  layout: 'drawer' | 'page';
-  onClose?: () => void;
+  layout: 'drawer' | 'page'
+  onClose?: () => void
 }) {
-  const {lines} = useCart();
-  const scrollRef = useRef(null);
-  const {y} = useScroll(scrollRef);
+  const { lines } = useCart()
+  const scrollRef = useRef(null)
+  const { y } = useScroll(scrollRef)
 
   if (lines.length === 0) {
-    return <CartEmpty onClose={onClose} layout={layout} />;
+    return <CartEmpty onClose={onClose} layout={layout} />
   }
 
   const container = {
     drawer: 'grid grid-cols-1 h-screen-no-nav grid-rows-[1fr_auto]',
-    page: 'pb-12 grid md:grid-cols-2 md:items-start gap-8 md:gap-8 lg:gap-12',
-  };
+    page: 'pb-12 grid md:grid-cols-2 md:items-start gap-8 md:gap-8 lg:gap-12'
+  }
 
   const content = {
     drawer: 'px-6 pb-6 sm-max:pt-2 overflow-auto transition md:px-12',
-    page: 'flex-grow md:translate-y-4',
-  };
+    page: 'flex-grow md:translate-y-4'
+  }
 
   const summary = {
     drawer: 'grid gap-6 p-6 border-t md:px-12',
-    page: 'sticky top-nav grid gap-6 p-4 md:px-6 md:translate-y-4 bg-primary/5 rounded w-full',
-  };
+    page: 'sticky top-nav grid gap-6 p-4 md:px-6 md:translate-y-4 bg-primary/5 rounded w-full'
+  }
 
   return (
     <form
@@ -56,7 +56,7 @@ export function CartDetails({
               <CartLineProvider key={line.id} line={line}>
                 <CartLineItem />
               </CartLineProvider>
-            );
+            )
           })}
         </ul>
       </section>
@@ -68,11 +68,11 @@ export function CartDetails({
         <CartCheckoutActions />
       </section>
     </form>
-  );
+  )
 }
 
 function CartCheckoutActions() {
-  const {checkoutUrl} = useCart();
+  const { checkoutUrl } = useCart()
   return (
     <>
       <div className="grid gap-4">
@@ -86,11 +86,11 @@ function CartCheckoutActions() {
         <CartShopPayButton />
       </div>
     </>
-  );
+  )
 }
 
 function OrderSummary() {
-  const {cost} = useCart();
+  const { cost } = useCart()
   return (
     <>
       <dl className="grid">
@@ -106,5 +106,5 @@ function OrderSummary() {
         </div>
       </dl>
     </>
-  );
+  )
 }

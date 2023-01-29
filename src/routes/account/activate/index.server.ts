@@ -2,10 +2,10 @@ import {
   CacheNone,
   gql,
   type HydrogenApiRouteOptions,
-  type HydrogenRequest,
-} from '@shopify/hydrogen';
+  type HydrogenRequest
+} from '@shopify/hydrogen'
 
-import {getApiErrorMessage} from '~/lib/utils';
+import { getApiErrorMessage } from '~/lib/utils.js'
 
 /**
  * This API route is used by the form on `/account/activate/[id]/[activationToken]`
@@ -13,56 +13,56 @@ import {getApiErrorMessage} from '~/lib/utils';
  */
 export async function api(
   request: HydrogenRequest,
-  {session, queryShop}: HydrogenApiRouteOptions,
+  { session, queryShop }: HydrogenApiRouteOptions
 ) {
   if (!session) {
     return new Response('Session storage not available.', {
-      status: 400,
-    });
+      status: 400
+    })
   }
 
-  const jsonBody = await request.json();
+  const jsonBody = await request.json()
 
   if (!jsonBody?.id || !jsonBody?.password || !jsonBody?.activationToken) {
     return new Response(
-      JSON.stringify({error: 'Incorrect password or activation token.'}),
+      JSON.stringify({ error: 'Incorrect password or activation token.' }),
       {
-        status: 400,
-      },
-    );
+        status: 400
+      }
+    )
   }
 
-  const {data, errors} = await queryShop<{
-    customerActivate: any;
+  const { data, errors } = await queryShop<{
+    customerActivate: any
   }>({
     query: CUSTOMER_ACTIVATE_MUTATION,
     variables: {
       id: `gid://shopify/Customer/${jsonBody.id}`,
       input: {
         password: jsonBody.password,
-        activationToken: jsonBody.activationToken,
-      },
+        activationToken: jsonBody.activationToken
+      }
     },
     // @ts-expect-error `queryShop.cache` is not yet supported but soon will be.
-    cache: CacheNone(),
-  });
+    cache: CacheNone()
+  })
 
   if (data?.customerActivate?.customerAccessToken?.accessToken) {
     await session.set(
       'customerAccessToken',
-      data.customerActivate.customerAccessToken.accessToken,
-    );
+      data.customerActivate.customerAccessToken.accessToken
+    )
 
     return new Response(null, {
-      status: 200,
-    });
+      status: 200
+    })
   } else {
     return new Response(
       JSON.stringify({
-        error: getApiErrorMessage('customerActivate', data, errors),
+        error: getApiErrorMessage('customerActivate', data, errors)
       }),
-      {status: 401},
-    );
+      { status: 401 }
+    )
   }
 }
 
@@ -80,4 +80,4 @@ const CUSTOMER_ACTIVATE_MUTATION = gql`
       }
     }
   }
-`;
+`

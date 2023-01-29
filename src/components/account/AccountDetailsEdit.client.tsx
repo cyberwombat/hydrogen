@@ -1,21 +1,21 @@
-import {useState} from 'react';
+import { useState } from 'react'
 
-import {Text, Button} from '~/components';
+import { Button, Text } from '~/components/index.js'
 import {
   emailValidation,
   passwordValidation,
-  useRenderServerComponents,
-} from '~/lib/utils';
-import {getInputStyleClasses} from '../../lib/styleUtils';
+  useRenderServerComponents
+} from '~/lib/utils.js'
+import { getInputStyleClasses } from '../../lib/styleUtils.js'
 
 interface FormElements {
-  firstName: HTMLInputElement;
-  lastName: HTMLInputElement;
-  phone: HTMLInputElement;
-  email: HTMLInputElement;
-  currentPassword: HTMLInputElement;
-  newPassword: HTMLInputElement;
-  newPassword2: HTMLInputElement;
+  firstName: HTMLInputElement
+  lastName: HTMLInputElement
+  phone: HTMLInputElement
+  email: HTMLInputElement
+  currentPassword: HTMLInputElement
+  newPassword: HTMLInputElement
+  newPassword2: HTMLInputElement
 }
 
 export function AccountDetailsEdit({
@@ -23,70 +23,70 @@ export function AccountDetailsEdit({
   lastName: _lastName = '',
   phone: _phone = '',
   email: _email = '',
-  close,
+  close
 }: {
-  firstName?: string;
-  lastName?: string;
-  phone?: string;
-  email?: string;
-  close: () => void;
+  firstName?: string
+  lastName?: string
+  phone?: string
+  email?: string
+  close: () => void
 }) {
-  const [saving, setSaving] = useState(false);
-  const [firstName, setFirstName] = useState(_firstName);
-  const [lastName, setLastName] = useState(_lastName);
-  const [phone, setPhone] = useState(_phone);
-  const [email, setEmail] = useState(_email);
-  const [emailError, setEmailError] = useState<null | string>(null);
+  const [saving, setSaving] = useState(false)
+  const [firstName, setFirstName] = useState(_firstName)
+  const [lastName, setLastName] = useState(_lastName)
+  const [phone, setPhone] = useState(_phone)
+  const [email, setEmail] = useState(_email)
+  const [emailError, setEmailError] = useState<null | string>(null)
   const [currentPasswordError, setCurrentPasswordError] = useState<
     null | string
-  >(null);
-  const [newPasswordError, setNewPasswordError] = useState<null | string>(null);
+  >(null)
+  const [newPasswordError, setNewPasswordError] = useState<null | string>(null)
   const [newPassword2Error, setNewPassword2Error] = useState<null | string>(
-    null,
-  );
-  const [submitError, setSubmitError] = useState<null | string>(null);
+    null
+  )
+  const [submitError, setSubmitError] = useState<null | string>(null)
 
   // Necessary for edits to show up on the main page
-  const renderServerComponents = useRenderServerComponents();
+  const renderServerComponents = useRenderServerComponents()
 
   async function onSubmit(
-    event: React.FormEvent<HTMLFormElement & FormElements>,
+    event: React.FormEvent<HTMLFormElement & FormElements>
   ) {
-    event.preventDefault();
+    event.preventDefault()
 
-    setEmailError(null);
-    setCurrentPasswordError(null);
-    setNewPasswordError(null);
-    setNewPassword2Error(null);
+    setEmailError(null)
+    setCurrentPasswordError(null)
+    setNewPasswordError(null)
+    setNewPassword2Error(null)
 
-    const emailError = emailValidation(event.currentTarget.email);
+    const emailError = emailValidation(event.currentTarget.email)
     if (emailError) {
-      setEmailError(emailError);
+      setEmailError(emailError)
     }
 
-    let currentPasswordError, newPasswordError, newPassword2Error;
+    let currentPasswordError, newPasswordError, newPassword2Error
 
     // Only validate the password fields if the current password has a value
     if (event.currentTarget.currentPassword.value) {
       currentPasswordError = passwordValidation(
-        event.currentTarget.currentPassword,
-      );
+        event.currentTarget.currentPassword
+      )
       if (currentPasswordError) {
-        setCurrentPasswordError(currentPasswordError);
+        setCurrentPasswordError(currentPasswordError)
       }
 
-      newPasswordError = passwordValidation(event.currentTarget.newPassword);
+      newPasswordError = passwordValidation(event.currentTarget.newPassword)
       if (newPasswordError) {
-        setNewPasswordError(newPasswordError);
+        setNewPasswordError(newPasswordError)
       }
 
       newPassword2Error =
         event.currentTarget.newPassword.value !==
         event.currentTarget.newPassword2.value
           ? 'The two passwords entered did not match'
-          : null;
+          : null
       if (newPassword2Error) {
-        setNewPassword2Error(newPassword2Error);
+        setNewPassword2Error(newPassword2Error)
       }
     }
 
@@ -96,10 +96,10 @@ export function AccountDetailsEdit({
       newPasswordError ||
       newPassword2Error
     ) {
-      return;
+      return
     }
 
-    setSaving(true);
+    setSaving(true)
 
     const accountUpdateResponse = await callAccountUpdateApi({
       email,
@@ -107,18 +107,18 @@ export function AccountDetailsEdit({
       currentPassword: event.currentTarget.currentPassword.value,
       phone,
       firstName,
-      lastName,
-    });
+      lastName
+    })
 
-    setSaving(false);
+    setSaving(false)
 
     if (accountUpdateResponse.error) {
-      setSubmitError(accountUpdateResponse.error);
-      return;
+      setSubmitError(accountUpdateResponse.error)
+      return
     }
 
-    renderServerComponents();
-    close();
+    renderServerComponents()
+    close()
   }
 
   return (
@@ -143,7 +143,7 @@ export function AccountDetailsEdit({
             aria-label="First name"
             value={firstName}
             onChange={(event) => {
-              setFirstName(event.target.value);
+              setFirstName(event.target.value)
             }}
           />
         </div>
@@ -158,7 +158,7 @@ export function AccountDetailsEdit({
             aria-label="Last name"
             value={lastName}
             onChange={(event) => {
-              setLastName(event.target.value);
+              setLastName(event.target.value)
             }}
           />
         </div>
@@ -173,7 +173,7 @@ export function AccountDetailsEdit({
             aria-label="Mobile"
             value={phone}
             onChange={(event) => {
-              setPhone(event.target.value);
+              setPhone(event.target.value)
             }}
           />
         </div>
@@ -189,7 +189,7 @@ export function AccountDetailsEdit({
             aria-label="Email address"
             value={email}
             onChange={(event) => {
-              setEmail(event.target.value);
+              setEmail(event.target.value)
             }}
           />
           <p
@@ -258,19 +258,19 @@ export function AccountDetailsEdit({
         </div>
       </form>
     </>
-  );
+  )
 }
 
 function Password({
   name,
   passwordError,
-  label,
+  label
 }: {
-  name: string;
-  passwordError: string | null;
-  label: string;
+  name: string
+  passwordError: string | null
+  label: string
 }) {
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState('')
 
   return (
     <div className="mt-3">
@@ -288,11 +288,11 @@ function Password({
         minLength={8}
         required
         onChange={(event) => {
-          setPassword(event.target.value);
+          setPassword(event.target.value)
         }}
       />
     </div>
-  );
+  )
 }
 
 export async function callAccountUpdateApi({
@@ -301,21 +301,21 @@ export async function callAccountUpdateApi({
   firstName,
   lastName,
   currentPassword,
-  newPassword,
+  newPassword
 }: {
-  email: string;
-  phone: string;
-  firstName: string;
-  lastName: string;
-  currentPassword: string;
-  newPassword: string;
+  email: string
+  phone: string
+  firstName: string
+  lastName: string
+  currentPassword: string
+  newPassword: string
 }) {
   try {
     const res = await fetch(`/account`, {
       method: 'PATCH',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         email,
@@ -323,17 +323,17 @@ export async function callAccountUpdateApi({
         firstName,
         lastName,
         currentPassword,
-        newPassword,
-      }),
-    });
+        newPassword
+      })
+    })
     if (res.ok) {
-      return {};
+      return {}
     } else {
-      return res.json();
+      return res.json()
     }
   } catch (_e) {
     return {
-      error: 'Error saving account. Please try again.',
-    };
+      error: 'Error saving account. Please try again.'
+    }
   }
 }

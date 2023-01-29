@@ -2,84 +2,84 @@ import {
   CacheLong,
   flattenConnection,
   gql,
-  type HydrogenRouteProps,
   Seo,
-  useLocalization,
-  useShopQuery,
-  useServerAnalytics,
   ShopifyAnalyticsConstants,
-} from '@shopify/hydrogen';
+  useLocalization,
+  useServerAnalytics,
+  useShopQuery,
+  type HydrogenRouteProps
+} from '@shopify/hydrogen'
 import type {
   Article,
-  Blog as BlogType,
-} from '@shopify/hydrogen/storefront-api-types';
-import {Suspense} from 'react';
+  Blog as BlogType
+} from '@shopify/hydrogen/storefront-api-types'
+import { Suspense } from 'react'
 
-import {ArticleCard, Grid, PageHeader} from '~/components';
-import {Layout} from '~/components/index.server';
-import {getImageLoadingPriority, PAGINATION_SIZE} from '~/lib/const';
+import { ArticleCard, Grid, PageHeader } from '~/components/index.js'
+import { Layout } from '~/components/index.server.js'
+import { getImageLoadingPriority, PAGINATION_SIZE } from '~/lib/const.js'
 
-const BLOG_HANDLE = 'Journal';
+const BLOG_HANDLE = 'Journal'
 
 export default function Blog({
   pageBy = PAGINATION_SIZE,
-  response,
+  response
 }: HydrogenRouteProps) {
-  response.cache(CacheLong());
+  response.cache(CacheLong())
 
   return (
     <Layout>
-      <Seo type="page" data={{title: 'All Journals'}} />
+      <Seo type="page" data={{ title: 'All Journals' }} />
       <PageHeader heading={BLOG_HANDLE} className="gap-0">
         <Suspense>
           <JournalsGrid pageBy={pageBy} />
         </Suspense>
       </PageHeader>
     </Layout>
-  );
+  )
 }
 
-function JournalsGrid({pageBy}: {pageBy: number}) {
+function JournalsGrid({ pageBy }: { pageBy: number }) {
   const {
-    language: {isoCode: languageCode},
-    country: {isoCode: countryCode},
-  } = useLocalization();
+    language: { isoCode: languageCode },
+    country: { isoCode: countryCode }
+  } = useLocalization()
 
-  const {data} = useShopQuery<{
-    blog: BlogType;
+  const { data } = useShopQuery<{
+    blog: BlogType
   }>({
     query: BLOG_QUERY,
     variables: {
       language: languageCode,
       blogHandle: BLOG_HANDLE,
-      pageBy,
-    },
-  });
+      pageBy
+    }
+  })
 
   useServerAnalytics({
     shopify: {
       canonicalPath: `/${BLOG_HANDLE}`,
-      pageType: ShopifyAnalyticsConstants.pageType.page,
-    },
-  });
+      pageType: ShopifyAnalyticsConstants.pageType.page
+    }
+  })
 
   // TODO: How to fix this type?
-  const rawArticles = flattenConnection<Article>(data.blog.articles);
+  const rawArticles = flattenConnection<Article>(data.blog.articles)
 
   const articles = rawArticles.map((article) => {
-    const {publishedAt} = article;
+    const { publishedAt } = article
     return {
       ...article,
       publishedAt: new Intl.DateTimeFormat(`${languageCode}-${countryCode}`, {
         year: 'numeric',
         month: 'long',
-        day: 'numeric',
-      }).format(new Date(publishedAt!)),
-    };
-  });
+        day: 'numeric'
+      }).format(new Date(publishedAt!))
+    }
+  })
 
   if (articles.length === 0) {
-    return <p>No articles found</p>;
+    return <p>No articles found</p>
   }
 
   return (
@@ -92,10 +92,10 @@ function JournalsGrid({pageBy}: {pageBy: number}) {
             key={article.id}
             loading={getImageLoadingPriority(i, 2)}
           />
-        );
+        )
       })}
     </Grid>
-  );
+  )
 }
 
 const BLOG_QUERY = gql`
@@ -129,4 +129,4 @@ const BLOG_QUERY = gql`
       }
     }
   }
-`;
+`

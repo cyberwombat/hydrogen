@@ -1,58 +1,58 @@
-import {Suspense} from 'react';
 import {
   CacheNone,
-  Seo,
   gql,
-  type HydrogenRequest,
+  Seo,
   type HydrogenApiRouteOptions,
-  type HydrogenRouteProps,
-} from '@shopify/hydrogen';
+  type HydrogenRequest,
+  type HydrogenRouteProps
+} from '@shopify/hydrogen'
+import { Suspense } from 'react'
 
-import {AccountCreateForm} from '~/components';
-import {Layout} from '~/components/index.server';
-import {getApiErrorMessage} from '~/lib/utils';
+import { AccountCreateForm } from '~/components/index.js'
+import { Layout } from '~/components/index.server.js'
+import { getApiErrorMessage } from '~/lib/utils.js'
 
-export default function Register({response}: HydrogenRouteProps) {
-  response.cache(CacheNone());
+export default function Register({ response }: HydrogenRouteProps) {
+  response.cache(CacheNone())
 
   return (
     <Layout>
       <Suspense>
-        <Seo type="noindex" data={{title: 'Register'}} />
+        <Seo type="noindex" data={{ title: 'Register' }} />
       </Suspense>
       <AccountCreateForm />
     </Layout>
-  );
+  )
 }
 
 export async function api(
   request: HydrogenRequest,
-  {queryShop}: HydrogenApiRouteOptions,
+  { queryShop }: HydrogenApiRouteOptions
 ) {
-  const jsonBody = await request.json();
+  const jsonBody = await request.json()
 
   if (!jsonBody.email || !jsonBody.password) {
     return new Response(
-      JSON.stringify({error: 'Email and password are required'}),
-      {status: 400},
-    );
+      JSON.stringify({ error: 'Email and password are required' }),
+      { status: 400 }
+    )
   }
 
-  const {data, errors} = await queryShop<{customerCreate: any}>({
+  const { data, errors } = await queryShop<{ customerCreate: any }>({
     query: CUSTOMER_CREATE_MUTATION,
     variables: {
       input: {
         email: jsonBody.email,
         password: jsonBody.password,
         firstName: jsonBody.firstName,
-        lastName: jsonBody.lastName,
-      },
+        lastName: jsonBody.lastName
+      }
     },
     // @ts-expect-error `queryShop.cache` is not yet supported but soon will be.
-    cache: CacheNone(),
-  });
+    cache: CacheNone()
+  })
 
-  const errorMessage = getApiErrorMessage('customerCreate', data, errors);
+  const errorMessage = getApiErrorMessage('customerCreate', data, errors)
 
   if (
     !errorMessage &&
@@ -62,15 +62,15 @@ export async function api(
     data.customerCreate.customer.id
   ) {
     return new Response(null, {
-      status: 200,
-    });
+      status: 200
+    })
   } else {
     return new Response(
       JSON.stringify({
-        error: errorMessage ?? 'Unknown error',
+        error: errorMessage ?? 'Unknown error'
       }),
-      {status: 401},
-    );
+      { status: 401 }
+    )
   }
 }
 
@@ -87,4 +87,4 @@ const CUSTOMER_CREATE_MUTATION = gql`
       }
     }
   }
-`;
+`

@@ -1,6 +1,4 @@
-import {Suspense} from 'react';
 import {
-  ClientAnalytics,
   gql,
   ProductOptionsProvider,
   Seo,
@@ -8,52 +6,54 @@ import {
   useLocalization,
   useRouteParams,
   useServerAnalytics,
-  useShopQuery,
-} from '@shopify/hydrogen';
+  useShopQuery
+} from '@shopify/hydrogen'
+import { Suspense } from 'react'
 
-import {MEDIA_FRAGMENT} from '~/lib/fragments';
-import {getExcerpt} from '~/lib/utils';
-import {NotFound, Layout, ProductSwimlane} from '~/components/index.server';
+import { Product, Shop } from '@shopify/hydrogen/storefront-api-types'
 import {
   Heading,
   ProductDetail,
   ProductForm,
   ProductGallery,
   Section,
-  Text,
-} from '~/components';
+  Text
+} from '~/components/index.js'
+import { Layout, NotFound, ProductSwimlane } from '~/components/index.server.js'
+import { MEDIA_FRAGMENT } from '~/lib/fragments.js'
+import { getExcerpt } from '~/lib/utils.js'
 
 export default function Product() {
-  const {handle} = useRouteParams();
+  const { handle } = useRouteParams()
   const {
-    language: {isoCode: languageCode},
-    country: {isoCode: countryCode},
-  } = useLocalization();
+    language: { isoCode: languageCode },
+    country: { isoCode: countryCode }
+  } = useLocalization()
 
   const {
-    data: {product, shop},
-  } = useShopQuery({
+    data: { product, shop }
+  } = useShopQuery<{ product: Product; shop: Shop }>({
     query: PRODUCT_QUERY,
     variables: {
       country: countryCode,
       language: languageCode,
-      handle,
+      handle
     },
-    preload: true,
-  });
+    preload: true
+  })
 
   if (!product) {
-    return <NotFound type="product" />;
+    return <NotFound type="product" />
   }
 
-  const {media, title, vendor, descriptionHtml, id, productType} = product;
-  const {shippingPolicy, refundPolicy} = shop;
+  const { media, title, vendor, descriptionHtml, id, productType } = product
+  const { shippingPolicy, refundPolicy } = shop
   const {
     priceV2,
     id: variantId,
     sku,
-    title: variantTitle,
-  } = product.variants.nodes[0];
+    title: variantTitle
+  } = product.variants.nodes[0]
 
   useServerAnalytics({
     shopify: {
@@ -69,11 +69,11 @@ export default function Product() {
           brand: vendor,
           category: productType,
           price: priceV2.amount,
-          sku,
-        },
-      ],
-    },
-  });
+          sku
+        }
+      ]
+    }
+  })
 
   return (
     <Layout>
@@ -125,11 +125,11 @@ export default function Product() {
           </div>
         </Section>
         <Suspense>
-          <ProductSwimlane title="Related Products" data={id} />
+          <ProductSwimlane title="Related Products" data={id as any} />
         </Suspense>
       </ProductOptionsProvider>
     </Layout>
-  );
+  )
 }
 
 const PRODUCT_QUERY = gql`
@@ -197,4 +197,4 @@ const PRODUCT_QUERY = gql`
       }
     }
   }
-`;
+`

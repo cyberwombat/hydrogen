@@ -1,61 +1,64 @@
 import {
   gql,
   HydrogenRouteProps,
-  type HydrogenApiRouteOptions,
-  type HydrogenRequest,
+  ShopifyAnalyticsConstants,
   useLocalization,
+  useServerAnalytics,
   useShopQuery,
   useUrl,
-  ShopifyAnalyticsConstants,
-  useServerAnalytics,
-} from '@shopify/hydrogen';
+  type HydrogenApiRouteOptions,
+  type HydrogenRequest
+} from '@shopify/hydrogen'
 
-import {PRODUCT_CARD_FRAGMENT} from '~/lib/fragments';
-import {ProductGrid, Section, Text} from '~/components';
-import {NoResultRecommendations, SearchPage} from '~/components/index.server';
-import {PAGINATION_SIZE} from '~/lib/const';
-import type {Collection} from '@shopify/hydrogen/storefront-api-types';
-import {Suspense} from 'react';
+import type { Collection } from '@shopify/hydrogen/storefront-api-types'
+import { Suspense } from 'react'
+import { ProductGrid, Section, Text } from '~/components/index.js'
+import {
+  NoResultRecommendations,
+  SearchPage
+} from '~/components/index.server.js'
+import { PAGINATION_SIZE } from '~/lib/const.js'
+import { PRODUCT_CARD_FRAGMENT } from '~/lib/fragments.js'
 
 export default function Search({
   pageBy = PAGINATION_SIZE,
-  params,
+  params
 }: {
-  pageBy?: number;
-  params: HydrogenRouteProps['params'];
+  pageBy?: number
+  params: HydrogenRouteProps['params']
 }) {
   const {
-    language: {isoCode: languageCode},
-    country: {isoCode: countryCode},
-  } = useLocalization();
+    language: { isoCode: languageCode },
+    country: { isoCode: countryCode }
+  } = useLocalization()
 
-  const {handle} = params;
-  const {searchParams} = useUrl();
+  const { handle } = params
+  const { searchParams } = useUrl()
 
-  const searchTerm = searchParams.get('q');
+  const searchTerm = searchParams.get('q')
 
-  const {data} = useShopQuery<any>({
+  const { data } = useShopQuery<any>({
     query: SEARCH_QUERY,
     variables: {
       handle,
       country: countryCode,
       language: languageCode,
       pageBy,
-      searchTerm,
+      searchTerm
     },
-    preload: true,
-  });
+    preload: true
+  })
 
   useServerAnalytics({
     shopify: {
       canonicalPath: '/search',
       pageType: ShopifyAnalyticsConstants.pageType.search,
-      searchTerm,
-    },
-  });
+      searchTerm
+    }
+  })
 
-  const products = data?.products;
-  const noResults = products?.nodes?.length === 0;
+  const products = data?.products
+  const noResults = products?.nodes?.length === 0
 
   if (!searchTerm || noResults) {
     return (
@@ -72,7 +75,7 @@ export default function Search({
           />
         </Suspense>
       </SearchPage>
-    );
+    )
   }
 
   return (
@@ -81,31 +84,31 @@ export default function Search({
         <ProductGrid
           key="search"
           url={`/search?country=${countryCode}&q=${searchTerm}`}
-          collection={{products} as Collection}
+          collection={{ products } as Collection}
         />
       </Section>
     </SearchPage>
-  );
+  )
 }
 
 // API to paginate the results of the search query.
 // @see templates/demo-store/src/components/product/ProductGrid.client.tsx
 export async function api(
   request: HydrogenRequest,
-  {params, queryShop}: HydrogenApiRouteOptions,
+  { params, queryShop }: HydrogenApiRouteOptions
 ) {
   if (request.method !== 'POST') {
     return new Response('Method not allowed', {
       status: 405,
-      headers: {Allow: 'POST'},
-    });
+      headers: { Allow: 'POST' }
+    })
   }
 
-  const url = new URL(request.url);
-  const cursor = url.searchParams.get('cursor');
-  const country = url.searchParams.get('country');
-  const searchTerm = url.searchParams.get('q');
-  const {handle} = params;
+  const url = new URL(request.url)
+  const cursor = url.searchParams.get('cursor')
+  const country = url.searchParams.get('country')
+  const searchTerm = url.searchParams.get('q')
+  const { handle } = params
 
   return await queryShop({
     query: PAGINATE_SEARCH_QUERY,
@@ -114,9 +117,9 @@ export async function api(
       cursor,
       pageBy: PAGINATION_SIZE,
       country,
-      searchTerm,
-    },
-  });
+      searchTerm
+    }
+  })
 }
 
 const SEARCH_QUERY = gql`
@@ -145,7 +148,7 @@ const SEARCH_QUERY = gql`
       }
     }
   }
-`;
+`
 
 const PAGINATE_SEARCH_QUERY = gql`
   ${PRODUCT_CARD_FRAGMENT}
@@ -171,4 +174,4 @@ const PAGINATE_SEARCH_QUERY = gql`
       }
     }
   }
-`;
+`

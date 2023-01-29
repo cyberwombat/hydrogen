@@ -1,65 +1,65 @@
-import {useState} from 'react';
-import {useNavigate, Link} from '@shopify/hydrogen/client';
+import { Link, useNavigate } from '@shopify/hydrogen/client'
+import { useState } from 'react'
 
-import {emailValidation, passwordValidation} from '~/lib/utils';
+import { emailValidation, passwordValidation } from '~/lib/utils.js'
 
-import {callLoginApi} from './AccountLoginForm.client';
-import {getInputStyleClasses} from '../../lib/styleUtils';
+import { getInputStyleClasses } from '../../lib/styleUtils.js'
+import { callLoginApi } from './AccountLoginForm.client.js'
 
 interface FormElements {
-  email: HTMLInputElement;
-  password: HTMLInputElement;
+  email: HTMLInputElement
+  password: HTMLInputElement
 }
 
 export function AccountCreateForm() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
-  const [submitError, setSubmitError] = useState<null | string>(null);
-  const [email, setEmail] = useState('');
-  const [emailError, setEmailError] = useState<null | string>(null);
-  const [password, setPassword] = useState('');
-  const [passwordError, setPasswordError] = useState<null | string>(null);
+  const [submitError, setSubmitError] = useState<null | string>(null)
+  const [email, setEmail] = useState('')
+  const [emailError, setEmailError] = useState<null | string>(null)
+  const [password, setPassword] = useState('')
+  const [passwordError, setPasswordError] = useState<null | string>(null)
 
   async function onSubmit(
-    event: React.FormEvent<HTMLFormElement & FormElements>,
+    event: React.FormEvent<HTMLFormElement & FormElements>
   ) {
-    event.preventDefault();
+    event.preventDefault()
 
-    setEmailError(null);
-    setPasswordError(null);
-    setSubmitError(null);
+    setEmailError(null)
+    setPasswordError(null)
+    setSubmitError(null)
 
-    const newEmailError = emailValidation(event.currentTarget.email);
+    const newEmailError = emailValidation(event.currentTarget.email)
     if (newEmailError) {
-      setEmailError(newEmailError);
+      setEmailError(newEmailError)
     }
 
-    const newPasswordError = passwordValidation(event.currentTarget.password);
+    const newPasswordError = passwordValidation(event.currentTarget.password)
     if (newPasswordError) {
-      setPasswordError(newPasswordError);
+      setPasswordError(newPasswordError)
     }
 
     if (newEmailError || newPasswordError) {
-      return;
+      return
     }
 
     const accountCreateResponse = await callAccountCreateApi({
       email,
-      password,
-    });
+      password
+    })
 
     if (accountCreateResponse.error) {
-      setSubmitError(accountCreateResponse.error);
-      return;
+      setSubmitError(accountCreateResponse.error)
+      return
     }
 
     // this can be avoided if customerCreate mutation returns customerAccessToken
     await callLoginApi({
       email,
-      password,
-    });
+      password
+    })
 
-    navigate('/account');
+    navigate('/account')
   }
 
   return (
@@ -86,7 +86,7 @@ export function AccountCreateForm() {
               autoFocus
               value={email}
               onChange={(event) => {
-                setEmail(event.target.value);
+                setEmail(event.target.value)
               }}
             />
             {!emailError ? (
@@ -108,7 +108,7 @@ export function AccountCreateForm() {
               minLength={8}
               required
               onChange={(event) => {
-                setPassword(event.target.value);
+                setPassword(event.target.value)
               }}
             />
             {!passwordError ? (
@@ -136,37 +136,37 @@ export function AccountCreateForm() {
         </form>
       </div>
     </div>
-  );
+  )
 }
 
 export async function callAccountCreateApi({
   email,
   password,
   firstName,
-  lastName,
+  lastName
 }: {
-  email: string;
-  password: string;
-  firstName?: string;
-  lastName?: string;
+  email: string
+  password: string
+  firstName?: string
+  lastName?: string
 }) {
   try {
     const res = await fetch(`/account/register`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({email, password, firstName, lastName}),
-    });
+      body: JSON.stringify({ email, password, firstName, lastName })
+    })
     if (res.status === 200) {
-      return {};
+      return {}
     } else {
-      return res.json();
+      return res.json()
     }
   } catch (error: any) {
     return {
-      error: error.toString(),
-    };
+      error: error.toString()
+    }
   }
 }

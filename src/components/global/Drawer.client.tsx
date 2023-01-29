@@ -1,8 +1,7 @@
-import {Fragment, useState} from 'react';
-// @ts-expect-error @headlessui/react incompatibility with node16 resolution
-import {Dialog, Transition} from '@headlessui/react';
+import { Dialog, Transition } from '@headlessui/react'
+import { Fragment, useState } from 'react'
 
-import {Heading, IconClose} from '~/components';
+import { Heading, IconClose } from '~/components/index.js'
 
 /**
  * Drawer component that opens on user click.
@@ -17,18 +16,18 @@ function Drawer({
   open,
   onClose,
   openFrom = 'right',
-  children,
+  children
 }: {
-  heading?: string;
-  open: boolean;
-  onClose: () => void;
-  openFrom: 'right' | 'left';
-  children: React.ReactNode;
+  heading?: string
+  open: boolean
+  onClose: () => void
+  openFrom: 'right' | 'left'
+  children: React.ReactNode
 }) {
   const offScreen = {
     right: 'translate-x-full',
-    left: '-translate-x-full',
-  };
+    left: '-translate-x-full'
+  }
 
   return (
     <Transition appear show={open} as={Fragment}>
@@ -90,28 +89,28 @@ function Drawer({
         </div>
       </Dialog>
     </Transition>
-  );
+  )
 }
 
 /* Use for associating arialabelledby with the title*/
-Drawer.Title = Dialog.Title;
+Drawer.Title = Dialog.Title
 
-export {Drawer};
+export { Drawer }
 
 export function useDrawer(openDefault = false) {
-  const [isOpen, setIsOpen] = useState(openDefault);
+  const [isOpen, setIsOpen] = useState(openDefault)
 
   function openDrawer() {
-    setIsOpen(true);
+    setIsOpen(true)
   }
 
   function closeDrawer() {
-    setIsOpen(false);
+    setIsOpen(false)
   }
 
   return {
     isOpen,
     openDrawer,
-    closeDrawer,
-  };
+    closeDrawer
+  }
 }

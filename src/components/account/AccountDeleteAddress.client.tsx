@@ -1,24 +1,24 @@
-import {Text, Button} from '~/components/elements';
-import {useRenderServerComponents} from '~/lib/utils';
+import { Button, Text } from '~/components/elements/index.js'
+import { useRenderServerComponents } from '~/lib/utils.js'
 
 export function AccountDeleteAddress({
   addressId,
-  close,
+  close
 }: {
-  addressId: string;
-  close: () => void;
+  addressId: string
+  close: () => void
 }) {
   // Necessary for edits to show up on the main page
-  const renderServerComponents = useRenderServerComponents();
+  const renderServerComponents = useRenderServerComponents()
 
   async function deleteAddress(id: string) {
-    const response = await callDeleteAddressApi(id);
+    const response = await callDeleteAddressApi(id)
     if (response.error) {
-      alert(response.error);
-      return;
+      alert(response.error)
+      return
     }
-    renderServerComponents();
-    close();
+    renderServerComponents()
+    close()
   }
 
   return (
@@ -31,7 +31,7 @@ export function AccountDeleteAddress({
         <Button
           className="text-sm"
           onClick={() => {
-            deleteAddress(addressId);
+            deleteAddress(addressId)
           }}
           variant="primary"
           width="full"
@@ -48,7 +48,7 @@ export function AccountDeleteAddress({
         </Button>
       </div>
     </>
-  );
+  )
 }
 
 export async function callDeleteAddressApi(id: string) {
@@ -56,17 +56,17 @@ export async function callDeleteAddressApi(id: string) {
     const res = await fetch(`/account/address/${encodeURIComponent(id)}`, {
       method: 'DELETE',
       headers: {
-        Accept: 'application/json',
-      },
-    });
+        Accept: 'application/json'
+      }
+    })
     if (res.ok) {
-      return {};
+      return {}
     } else {
-      return res.json();
+      return res.json()
     }
   } catch (_e) {
     return {
-      error: 'Error removing address. Please try again.',
-    };
+      error: 'Error removing address. Please try again.'
+    }
   }
 }

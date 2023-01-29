@@ -2,9 +2,9 @@ import {
   CacheNone,
   gql,
   type HydrogenApiRouteOptions,
-  type HydrogenRequest,
-} from '@shopify/hydrogen';
-import {getApiErrorMessage} from '~/lib/utils';
+  type HydrogenRequest
+} from '@shopify/hydrogen'
+import { getApiErrorMessage } from '~/lib/utils.js'
 
 /**
  * This API route is used by the form on `/account/reset/[id]/[resetToken]`
@@ -12,54 +12,54 @@ import {getApiErrorMessage} from '~/lib/utils';
  */
 export async function api(
   request: HydrogenRequest,
-  {session, queryShop}: HydrogenApiRouteOptions,
+  { session, queryShop }: HydrogenApiRouteOptions
 ) {
   if (!session) {
     return new Response('Session storage not available.', {
-      status: 400,
-    });
+      status: 400
+    })
   }
 
-  const jsonBody = await request.json();
+  const jsonBody = await request.json()
 
   if (!jsonBody.id || !jsonBody.password || !jsonBody.resetToken) {
     return new Response(
-      JSON.stringify({error: 'Incorrect password or reset token.'}),
+      JSON.stringify({ error: 'Incorrect password or reset token.' }),
       {
-        status: 400,
-      },
-    );
+        status: 400
+      }
+    )
   }
 
-  const {data, errors} = await queryShop<{customerReset: any}>({
+  const { data, errors } = await queryShop<{ customerReset: any }>({
     query: CUSTOMER_RESET_MUTATION,
     variables: {
       id: `gid://shopify/Customer/${jsonBody.id}`,
       input: {
         password: jsonBody.password,
-        resetToken: jsonBody.resetToken,
-      },
+        resetToken: jsonBody.resetToken
+      }
     },
     // @ts-expect-error `queryShop.cache` is not yet supported but soon will be.
-    cache: CacheNone(),
-  });
+    cache: CacheNone()
+  })
 
   if (data?.customerReset?.customerAccessToken?.accessToken) {
     await session.set(
       'customerAccessToken',
-      data.customerReset.customerAccessToken.accessToken,
-    );
+      data.customerReset.customerAccessToken.accessToken
+    )
 
     return new Response(null, {
-      status: 200,
-    });
+      status: 200
+    })
   } else {
     return new Response(
       JSON.stringify({
-        error: getApiErrorMessage('customerReset', data, errors),
+        error: getApiErrorMessage('customerReset', data, errors)
       }),
-      {status: 401},
-    );
+      { status: 401 }
+    )
   }
 }
 
@@ -77,4 +77,4 @@ const CUSTOMER_RESET_MUTATION = gql`
       }
     }
   }
-`;
+`

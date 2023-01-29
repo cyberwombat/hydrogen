@@ -1,5 +1,5 @@
-export {ProductForm} from './ProductForm.client';
-export {ProductGallery} from './ProductGallery.client';
-export {ProductGrid} from './ProductGrid.client';
-export {ProductDetail} from './ProductDetail.client';
-export {ProductOptions} from './ProductOptions.client';
+export { ProductDetail } from './ProductDetail.client.js'
+export { ProductForm } from './ProductForm.client.js'
+export { ProductGallery } from './ProductGallery.client.js'
+export { ProductGrid } from './ProductGrid.client.js'
+export { ProductOptions } from './ProductOptions.client.js'

@@ -1,28 +1,28 @@
-import {Seo} from '@shopify/hydrogen';
-import {useState} from 'react';
-import {Modal} from '../index';
-import {AccountDetailsEdit} from './AccountDetailsEdit.client';
+import { Seo } from '@shopify/hydrogen'
+import { useState } from 'react'
+import { Modal } from '../index.js'
+import { AccountDetailsEdit } from './AccountDetailsEdit.client.js'
 
 export function AccountDetails({
   firstName,
   lastName,
   phone,
-  email,
+  email
 }: {
-  firstName?: string;
-  lastName?: string;
-  phone?: string;
-  email?: string;
+  firstName?: string
+  lastName?: string
+  phone?: string
+  email?: string
 }) {
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(false)
 
-  const close = () => setIsEditing(false);
+  const close = () => setIsEditing(false)
 
   return (
     <>
       {isEditing ? (
         <Modal close={close}>
-          <Seo type="noindex" data={{title: 'Account details'}} />
+          <Seo type="noindex" data={{ title: 'Account details' }} />
           <AccountDetailsEdit
             firstName={firstName}
             lastName={lastName}
@@ -62,5 +62,5 @@ export function AccountDetails({
         </div>
       </div>
     </>
-  );
+  )
 }

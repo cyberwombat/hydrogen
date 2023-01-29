@@ -1,19 +1,20 @@
 import {
-  useCart,
-  useCartLine,
-  CartLineQuantityAdjustButton,
   CartLinePrice,
   CartLineQuantity,
+  CartLineQuantityAdjustButton,
   Image,
   Link,
-} from '@shopify/hydrogen';
-import type {Image as ImageType} from '@shopify/hydrogen/storefront-api-types';
+  useCart,
+  useCartLine
+} from '@shopify/hydrogen'
+import type { Image as ImageType } from '@shopify/hydrogen/storefront-api-types'
 
-import {Heading, IconRemove, Text} from '~/components';
+import { Heading, Text } from '~/components/index.js'
+import { IconRemove } from '../elements/Icon.js'
 
 export function CartLineItem() {
-  const {linesRemove} = useCart();
-  const {id: lineId, quantity, merchandise} = useCartLine();
+  const { linesRemove } = useCart()
+  const { id: lineId, quantity, merchandise } = useCartLine()
 
   return (
     <li key={lineId} className="flex gap-4">
@@ -25,7 +26,7 @@ export function CartLineItem() {
           data={merchandise.image as ImageType}
           loaderOptions={{
             scale: 2,
-            crop: 'center',
+            crop: 'center'
           }}
           className="object-cover object-center w-24 h-24 border rounded md:w-28 md:h-28"
         />
@@ -66,15 +67,15 @@ export function CartLineItem() {
         </Text>
       </div>
     </li>
-  );
+  )
 }
 
 function CartLineQuantityAdjust({
   lineId,
-  quantity,
+  quantity
 }: {
-  lineId: string;
-  quantity: number;
+  lineId: string
+  quantity: number
 }) {
   return (
     <>
@@ -99,5 +100,5 @@ function CartLineQuantityAdjust({
         </CartLineQuantityAdjustButton>
       </div>
     </>
-  );
+  )
 }

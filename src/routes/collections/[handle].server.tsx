@@ -1,44 +1,45 @@
-import {Suspense} from 'react';
 import {
   gql,
-  type HydrogenRouteProps,
   Seo,
   ShopifyAnalyticsConstants,
-  useServerAnalytics,
   useLocalization,
+  useServerAnalytics,
   useShopQuery,
-  type HydrogenRequest,
   type HydrogenApiRouteOptions,
-} from '@shopify/hydrogen';
+  type HydrogenRequest,
+  type HydrogenRouteProps
+} from '@shopify/hydrogen'
+import type { Collection } from '@shopify/hydrogen/storefront-api-types'
+import { Suspense } from 'react'
 
-import {PRODUCT_CARD_FRAGMENT} from '~/lib/fragments';
-import {PageHeader, ProductGrid, Section, Text} from '~/components';
-import {NotFound, Layout} from '~/components/index.server';
+import { PageHeader, ProductGrid, Section, Text } from '~/components/index.js'
+import { Layout, NotFound } from '~/components/index.server.js'
+import { PRODUCT_CARD_FRAGMENT } from '~/lib/fragments.js'
 
-const pageBy = 48;
+const pageBy = 48
 
-export default function Collection({params}: HydrogenRouteProps) {
-  const {handle} = params;
+export default function Collection({ params }: HydrogenRouteProps) {
+  const { handle } = params
   const {
-    language: {isoCode: language},
-    country: {isoCode: country},
-  } = useLocalization();
+    language: { isoCode: language },
+    country: { isoCode: country }
+  } = useLocalization()
 
   const {
-    data: {collection},
-  } = useShopQuery({
+    data: { collection }
+  } = useShopQuery<{ collection: Collection }>({
     query: COLLECTION_QUERY,
     variables: {
       handle,
       language,
       country,
-      pageBy,
+      pageBy
     },
-    preload: true,
-  });
+    preload: true
+  })
 
   if (!collection) {
-    return <NotFound type="collection" />;
+    return <NotFound type="collection" />
   }
 
   useServerAnalytics({
@@ -46,9 +47,9 @@ export default function Collection({params}: HydrogenRouteProps) {
       canonicalPath: `/collections/${handle}`,
       pageType: ShopifyAnalyticsConstants.pageType.collection,
       resourceId: collection.id,
-      collectionHandle: handle,
-    },
-  });
+      collectionHandle: handle
+    }
+  })
 
   return (
     <Layout>
@@ -74,26 +75,26 @@ export default function Collection({params}: HydrogenRouteProps) {
         />
       </Section>
     </Layout>
-  );
+  )
 }
 
 // API endpoint that returns paginated products for this collection
 // @see templates/demo-store/src/components/product/ProductGrid.client.tsx
 export async function api(
   request: HydrogenRequest,
-  {params, queryShop}: HydrogenApiRouteOptions,
+  { params, queryShop }: HydrogenApiRouteOptions
 ) {
   if (request.method !== 'POST') {
     return new Response('Method not allowed', {
       status: 405,
-      headers: {Allow: 'POST'},
-    });
+      headers: { Allow: 'POST' }
+    })
   }
-  const url = new URL(request.url);
+  const url = new URL(request.url)
 
-  const cursor = url.searchParams.get('cursor');
-  const country = url.searchParams.get('country');
-  const {handle} = params;
+  const cursor = url.searchParams.get('cursor')
+  const country = url.searchParams.get('country')
+  const { handle } = params
 
   return await queryShop({
     query: PAGINATE_COLLECTION_QUERY,
@@ -101,9 +102,9 @@ export async function api(
       handle,
       cursor,
       pageBy,
-      country,
-    },
-  });
+      country
+    }
+  })
 }
 
 const COLLECTION_QUERY = gql`
@@ -141,7 +142,7 @@ const COLLECTION_QUERY = gql`
       }
     }
   }
-`;
+`
 
 const PAGINATE_COLLECTION_QUERY = gql`
   ${PRODUCT_CARD_FRAGMENT}
@@ -164,4 +165,4 @@ const PAGINATE_COLLECTION_QUERY = gql`
       }
     }
   }
-`;
+`

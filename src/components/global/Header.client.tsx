@@ -1,5 +1,5 @@
-import {Link, useUrl, useCart} from '@shopify/hydrogen';
-import {useWindowScroll} from 'react-use';
+import { Link, useCart, useUrl } from '@shopify/hydrogen'
+import { useWindowScroll } from 'react-use'
 
 import {
   Heading,
@@ -7,37 +7,43 @@ import {
   IconBag,
   IconMenu,
   IconSearch,
-  Input,
-} from '~/components';
+  Input
+} from '~/components/index.js'
 
-import {CartDrawer} from './CartDrawer.client';
-import {MenuDrawer} from './MenuDrawer.client';
-import {useDrawer} from './Drawer.client';
+import { CartDrawer } from './CartDrawer.client.js'
+import { useDrawer } from './Drawer.client.js'
+import { MenuDrawer } from './MenuDrawer.client.js'
 
-import type {EnhancedMenu} from '~/lib/utils';
+import type { EnhancedMenu } from '~/lib/utils.js'
 
 /**
  * A client component that specifies the content of the header on the website
  */
-export function Header({title, menu}: {title: string; menu?: EnhancedMenu}) {
-  const {pathname} = useUrl();
+export function Header({
+  title,
+  menu
+}: {
+  title: string
+  menu?: EnhancedMenu
+}) {
+  const { pathname } = useUrl()
 
-  const localeMatch = /^\/([a-z]{2})(\/|$)/i.exec(pathname);
-  const countryCode = localeMatch ? localeMatch[1] : undefined;
+  const localeMatch = /^\/([a-z]{2})(\/|$)/i.exec(pathname)
+  const countryCode = localeMatch ? localeMatch[1] : undefined
 
-  const isHome = pathname === `/${countryCode ? countryCode + '/' : ''}`;
+  const isHome = pathname === `/${countryCode ? countryCode + '/' : ''}`
 
   const {
     isOpen: isCartOpen,
     openDrawer: openCart,
-    closeDrawer: closeCart,
-  } = useDrawer();
+    closeDrawer: closeCart
+  } = useDrawer()
 
   const {
     isOpen: isMenuOpen,
     openDrawer: openMenu,
-    closeDrawer: closeMenu,
-  } = useDrawer();
+    closeDrawer: closeMenu
+  } = useDrawer()
 
   return (
     <>
@@ -58,7 +64,7 @@ export function Header({title, menu}: {title: string; menu?: EnhancedMenu}) {
         openMenu={openMenu}
       />
     </>
-  );
+  )
 }
 
 function MobileHeader({
@@ -66,15 +72,15 @@ function MobileHeader({
   title,
   isHome,
   openCart,
-  openMenu,
+  openMenu
 }: {
-  countryCode?: string | null;
-  title: string;
-  isHome: boolean;
-  openCart: () => void;
-  openMenu: () => void;
+  countryCode?: string | null
+  title: string
+  isHome: boolean
+  openCart: () => void
+  openMenu: () => void
 }) {
-  const {y} = useWindowScroll();
+  const { y } = useWindowScroll()
 
   const styles = {
     button: 'relative flex items-center justify-center w-8 h-8',
@@ -84,8 +90,8 @@ function MobileHeader({
         : 'bg-contrast/80 text-primary'
     } ${
       y > 50 && !isHome ? 'shadow-lightHeader ' : ''
-    }flex lg:hidden items-center h-nav sticky backdrop-blur-lg z-40 top-0 justify-between w-full leading-none gap-4 px-4 md:px-8`,
-  };
+    }flex lg:hidden items-center h-nav sticky backdrop-blur-lg z-40 top-0 justify-between w-full leading-none gap-4 px-4 md:px-8`
+  }
 
   return (
     <header role="banner" className={styles.container}>
@@ -133,7 +139,7 @@ function MobileHeader({
         </button>
       </div>
     </header>
-  );
+  )
 }
 
 function DesktopHeader({
@@ -141,15 +147,15 @@ function DesktopHeader({
   isHome,
   menu,
   openCart,
-  title,
+  title
 }: {
-  countryCode?: string | null;
-  isHome: boolean;
-  openCart: () => void;
-  menu?: EnhancedMenu;
-  title: string;
+  countryCode?: string | null
+  isHome: boolean
+  openCart: () => void
+  menu?: EnhancedMenu
+  title: string
 }) {
-  const {y} = useWindowScroll();
+  const { y } = useWindowScroll()
 
   const styles = {
     button:
@@ -160,8 +166,8 @@ function DesktopHeader({
         : 'bg-contrast/80 text-primary'
     } ${
       y > 50 && !isHome ? 'shadow-lightHeader ' : ''
-    }hidden h-nav lg:flex items-center sticky transition duration-300 backdrop-blur-lg z-40 top-0 justify-between w-full leading-none gap-8 px-12 py-8`,
-  };
+    }hidden h-nav lg:flex items-center sticky transition duration-300 backdrop-blur-lg z-40 top-0 justify-between w-full leading-none gap-8 px-12 py-8`
+  }
 
   return (
     <header role="banner" className={styles.container}>
@@ -207,14 +213,14 @@ function DesktopHeader({
         </button>
       </div>
     </header>
-  );
+  )
 }
 
-function CartBadge({dark}: {dark: boolean}) {
-  const {totalQuantity} = useCart();
+function CartBadge({ dark }: { dark: boolean }) {
+  const { totalQuantity } = useCart()
 
   if (totalQuantity < 1) {
-    return null;
+    return null
   }
   return (
     <div
@@ -226,5 +232,5 @@ function CartBadge({dark}: {dark: boolean}) {
     >
       <span>{totalQuantity}</span>
     </div>
-  );
+  )
 }
