@@ -1395,7 +1395,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@shopify/prettier-config@npm:1.1.2, @shopify/prettier-config@npm:^1.1.2":
+"@shopify/prettier-config@npm:1.1.2":
   version: 1.1.2
   resolution: "@shopify/prettier-config@npm:1.1.2"
   checksum: 3fbb50c2743bcc2654268d7f460b754c761035b959969a77c6ac32284c75714dcd788ccbed4dd783ae38885218bf6eae068c860d6f14121c8696bcd525df43c2
@@ -8843,7 +8843,6 @@ __metadata:
     "@shopify/cli": 3.38.0
     "@shopify/cli-hydrogen": 3.38.0
     "@shopify/hydrogen": ^1.6.6
-    "@shopify/prettier-config": ^1.1.2
     "@tailwindcss/forms": ^0.5.3
     "@tailwindcss/typography": ^0.5.9
     "@types/node": ^18.11.18
